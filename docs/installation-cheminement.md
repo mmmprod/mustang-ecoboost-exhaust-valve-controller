@@ -1,4 +1,40 @@
-# Guide d'Installation - Cheminement Câblage & Pneumatique
+# Guide d'Installation - Cheminement Câblage & Pneumatique v4.2
+
+**Version :** 4.2  
+**Date :** Décembre 2025
+
+---
+
+## ⚠️ AVERTISSEMENT SÉCURITÉ — FAIL-SAFE VALVE
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ⚠️ FAIL-SAFE VALVE                           │
+├─────────────────────────────────────────────────────────────────┤
+│ L'actionneur est FAIL-CLOSED (ressort ferme, pression ouvre).   │
+│                                                                 │
+│ En cas de panne électrique ou pneumatique en pleine charge:     │
+│ → La valve se FERME → BACKPRESSURE sur le turbo                │
+│                                                                 │
+│ RÉACTION REQUISE: Si perte de puissance soudaine,              │
+│                   LEVER LE PIED IMMÉDIATEMENT                   │
+│                                                                 │
+│ PROBABILITÉ: Faible — Circuit V4.2 protégé                      │
+│ (BTS5090, fusibles, TVS/MOV, régulateur pression)              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔴 CORRECTIONS CRITIQUES v4.2
+
+| Correction | Impact Installation |
+|------------|-------------------|
+| ❌ **Check valve SUPPRIMÉE** | Ligne vacuum doit être LIBRE (pas de restriction) |
+| ✅ **Régulateur SMC IR1000-01BG AJOUTÉ** | Installer entre compresseur et boîtier |
+| ✅ **Gaine aluminisée recommandée** | Protéger durite 50cm près échappement |
+
+---
 
 ## Vue d'Ensemble du Routage
 
@@ -16,8 +52,8 @@
     │  └───┬───┘  │                                           │  │CIRCUIT│  │
     │      │      │                                           │  └───────┘  │
     │  ┌───┴───┐  │         PASSAGE SOUS VÉHICULE             │      │      │
-    │  │ MAP   │◄─┼─────────── DURITE VACUUM ─────────────────┼──────┘      │
-    │  └───────┘  │         (check valve inclus)              │             │
+    │  │ MAP   │◄─┼───────── DURITE VACUUM LIBRE ──────────────┼──────┘      │
+    │  └───────┘  │    ❌ PAS DE CHECK VALVE (v4.2)        │             │
     │             │                                           │  ┌───────┐  │
     │  ┌───────┐  │                                           │  │COMPRES│  │
     │  │COLLECT│  │                                           │  │-SEUR  │  │
@@ -106,13 +142,28 @@ BATTERIE (-)
 
 ## PARTIE 2 : Circuit Pneumatique - Pression (Compresseur)
 
-### 2.1 Compresseur → Boîtier → Valve
+### ✅ NOUVEAU v4.2 : Régulateur SMC IR1000-01BG OBLIGATOIRE
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ⚠️ RÉGULATEUR DE PRESSION OBLIGATOIRE v4.2                     │
+├─────────────────────────────────────────────────────────────────┤
+│  Compresseur HS-551: 90-120 PSI (6-8 bar)                       │
+│  Actionneur valve: Seuil 7 PSI (0,5 bar)                        │
+│  Ratio 13× → DESTRUCTION membrane sans régulateur               │
+│                                                                 │
+│  Solution: SMC IR1000-01BG réglé 1 bar (15 PSI)                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 2.1 Compresseur → Régulateur → Boîtier → Valve
 
 ```
 ┌──────────────────┐
 │   COMPRESSEUR    │
+│   HS-551         │
 │   (dans coffre)  │
-│                  │
+│   90-120 PSI     │
 │   Sortie 1/4 NPT │
 └────────┬─────────┘
          │
@@ -125,12 +176,29 @@ BATTERIE (-)
     ┌────┴────┐
     │         │
     ▼         ▼
-KLAXON    BOÎTIER
-(existant) CIRCUIT
-              │
-              │  Tube Ø6mm polyuréthane
-              │
-              ▼
+KLAXON    Tube Ø6mm
+(existant)   │
+             │
+             ▼
+   Raccord Ø6mm → 1/8"
+   (SMC KQ2H06-01)
+             │
+             ▼
+┌─────────────────────────────────┐
+│  SMC IR1000-01BG                │  ← ✅ NOUVEAU v4.2
+│  Régulateur pression             │
+│  Réglé: 0,1 MPa (1 bar = 15 PSI)│
+│  Manomètre inclus                │
+└─────────────────────────────────┘
+             │
+             │  Sortie régulateur
+             ▼
+   Raccord 1/8" → Ø6mm
+   (SMC KQ2H06-01)
+             │
+             │  Tube Ø6mm polyuréthane
+             │
+             ▼
 ┌─────────────────────────────────────────┐
 │  BOÎTIER CIRCUIT                        │
 │                                         │
@@ -138,15 +206,9 @@ KLAXON    BOÎTIER
 │           │                             │
 │           ▼                             │
 │  ┌─────────────────┐                    │
-│  │ CHECK VALVE     │  (optionnel)       │
-│  │ sens: réservoir │                    │
-│  │      → MAC      │                    │
-│  └────────┬────────┘                    │
-│           │                             │
-│           ▼                             │
-│  ┌─────────────────┐                    │
 │  │   MAC 35A       │                    │
 │  │   Port P (1)    │  ← Entrée pression │
+│  │                 │     (1 bar max)    │
 │  └─────────────────┘                    │
 └─────────────────────────────────────────┘
 ```
@@ -172,7 +234,7 @@ KLAXON    BOÎTIER
             │  CHEMINEMENT:
             │  1. Sortir du coffre par passe-câble
             │  2. Longer le dessous de caisse côté échappement
-            │  3. Protéger avec gaine thermique près échappement
+            │  3. ✅ Gaine aluminisée 50cm près échappement (v4.2)
             │  4. Remonter vers actionneur valve
             │
             ▼
@@ -209,6 +271,20 @@ KLAXON    BOÎTIER
 
 ## PARTIE 3 : Circuit Pneumatique - Vacuum (Pressostat)
 
+### ❌ CORRECTION CRITIQUE v4.2 : PAS DE CHECK VALVE
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ⚠️ AUCUNE CHECK VALVE SUR LIGNE VACUUM                         │
+├─────────────────────────────────────────────────────────────────┤
+│  Problème corrigé v4.2:                                         │
+│  Une check valve piégeait la pression après accélération        │
+│  → pressostat restait ON → valve bloquée ouverte                │
+│                                                                 │
+│  Solution: Durite LIBRE sans restriction                        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ### 3.1 Collecteur Admission → Pressostat
 
 ```
@@ -223,16 +299,11 @@ KLAXON    BOÎTIER
 │           │                             │
 │           │  Raccord en T sur ligne MAP │
 │           │                             │
-│           ▼                             │
-│  ┌─────────────────┐                    │
-│  │  CHECK VALVE    │                    │
-│  │  (flèche vers   │                    │
-│  │   coffre)       │                    │
-│  └────────┬────────┘                    │
+│           │  ❌ PAS DE CHECK VALVE      │
 │           │                             │
 └───────────┼─────────────────────────────┘
             │
-            │  Durite silicone/caoutchouc Ø6mm
+            │  Durite silicone/caoutchouc Ø6mm LIBRE
             │
             │  CHEMINEMENT:
             │  1. Passer côté passager (éviter chaleur échappement)
@@ -250,8 +321,7 @@ KLAXON    BOÎTIER
 │           ▼                             │
 │  ┌─────────────────┐                    │
 │  │  PRESSOSTAT     │                    │
-│  │  SMC ISE30A     │                    │
-│  │  -01-N          │                    │
+│  │  SMC ISE30A-01-N│                    │
 │  └─────────────────┘                    │
 │                                         │
 └─────────────────────────────────────────┘
@@ -399,9 +469,10 @@ BATTERIE ──●──────●──────●──────�
 |---------|------------------|-------|
 | Câble batterie (+) | ~4-5 m | Selon passage choisi |
 | Câble batterie (-) | ~4-5 m | Même chemin que + |
-| Durite vacuum (MAP → coffre) | ~5-6 m | Passage côté passager |
-| Tube air (compresseur → boîtier) | ~0,5 m | Dans le coffre |
-| Tube air (boîtier → actionneur) | ~3-4 m | Sous véhicule |
+| Durite vacuum (MAP → coffre) | ~5-6 m | Passage côté passager ❌ PAS DE CHECK VALVE |
+| Tube air (compresseur → régulateur) | ~0,3 m | Coffre - NOUVEAU v4.2 |
+| Tube air (régulateur → boîtier) | ~0,2 m | Coffre - NOUVEAU v4.2 |
+| Tube air (boîtier → actionneur) | ~3-4 m | Sous véhicule + gaine aluminisée 50cm |
 | Faisceau bouton | ~3-4 m | Coffre → habitacle |
 
 ---
@@ -421,17 +492,22 @@ BATTERIE ──●──────●──────●──────�
 - [ ] Gaine de protection installée
 - [ ] Connexion boîtier OK (Deutsch DT)
 
-### Circuit Vacuum (Pressostat)
+### Circuit Vacuum (Pressostat) - ⚠️ CRITIQUE v4.2
 - [ ] Raccord T sur ligne MAP installé
-- [ ] Check valve installé (flèche vers coffre)
-- [ ] Durite passée et fixée
+- [ ] ❌ **VÉRIFIER AUCUNE check valve présente sur ligne vacuum**
+- [ ] Durite LIBRE passée et fixée
 - [ ] Connexion pressostat OK
 
-### Circuit Air (Commande Valve)
-- [ ] Té compresseur installé
-- [ ] Tube vers boîtier connecté (Port P)
-- [ ] Tube vers actionneur passé et fixé
-- [ ] Gaine thermique sur zones chaudes
+### Circuit Air (Commande Valve) - ✅ NOUVEAU v4.2
+- [ ] Té compresseur installé (klaxon + régulateur)
+- [ ] ✅ **Régulateur SMC IR1000-01BG installé**
+- [ ] Adaptateurs 1/8" → Ø6mm installés (2×)
+- [ ] Ruban PTFE appliqué sur filetages
+- [ ] Tube compresseur → régulateur connecté
+- [ ] Tube régulateur → boîtier connecté (Port P MAC)
+- [ ] Réglage régulateur 1 bar (15 PSI)
+- [ ] Tube boîtier → actionneur passé et fixé
+- [ ] ✅ **Gaine aluminisée 50cm installée près échappement**
 - [ ] Connexion actionneur OK
 
 ### Bouton Habitacle
@@ -457,16 +533,21 @@ BATTERIE ──●──────●──────●──────�
 3. **Protéger** avec gaine tressée ou gaine thermique
 4. **Fixer régulièrement** : tous les 15-20cm
 
-### Points Critiques
+### Points Critiques v4.2
+
 ⚠️ **Fusible batterie** : ≤15cm de la borne, accessible  
-⚠️ **Check valve vacuum** : sens correct (flèche vers coffre)  
-⚠️ **Zone échappement** : gaine thermique aluminium obligatoire  
-⚠️ **Étanchéité** : vérifier tous les passe-câbles  
+❌ **AUCUNE check valve sur ligne vacuum** : durite LIBRE obligatoire (v4.2)  
+✅ **Régulateur SMC IR1000-01BG** : obligatoire entre compresseur et MAC (v4.2)  
+✅ **Gaine aluminisée 50cm** : protection thermique durite actionneur (v4.2)  
+⚠️ **Étanchéité** : vérifier tous les passe-câbles et raccords au savon  
+⚠️ **Fail-safe valve** : En cas de panne, valve se ferme → lever le pied immédiatement  
 
 ### Outils Recommandés
 - Pince à dénuder
 - Pince à sertir (cosses)
 - Colliers plastique 150mm (pack de 100)
 - Gaine tressée PET Ø8-10mm (5m)
-- Gaine thermique aluminium (1m)
+- **Gaine aluminisée Ø10-12mm (1m)** ← ✅ NOUVEAU v4.2
 - Lubrifiant silicone (passage câbles)
+- **Ruban PTFE (Téflon)** pour filetages régulateur ← ✅ NOUVEAU v4.2
+- Savon ou produit détecteur de fuites (test étanchéité)
