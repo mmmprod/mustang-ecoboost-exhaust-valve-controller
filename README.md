@@ -90,8 +90,9 @@ Compresseur HS-551 (90-120 PSI)
 
 ### Guides
 - 📋 [Spécifications techniques](docs/specifications.md)
-- ⚡ [Schéma électrique](docs/schema-electrique.md)
-- 🔧 [Installation & cheminement](docs/installation-cheminement.md)
+- ⚡ [Schéma électrique v4.2](docs/schema-electrique.md)
+- 💨 [Schéma pneumatique v4.2](docs/schema-pneumatique.md)
+- 🔧 [Installation & cheminement v4.2](docs/installation-cheminement.md)
 - ✅ [Procédures de validation](docs/validation.md)
 
 ---
