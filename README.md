@@ -1,21 +1,44 @@
 # Valve d'Échappement Automatique - Mustang EcoBoost 2016
 
+## Circuit VALVE v4.2
+
 Circuit pneumatique et électrique pour contrôle automatique de valve d'échappement.
+
+---
+
+## ⚠️ AVERTISSEMENT SÉCURITÉ
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ⚠️ FAIL-SAFE VALVE                           │
+├─────────────────────────────────────────────────────────────────┤
+│ L'actionneur est FAIL-CLOSED (ressort ferme, pression ouvre).   │
+│                                                                 │
+│ En cas de panne électrique ou pneumatique en pleine charge:     │
+│ → La valve se FERME → BACKPRESSURE sur le turbo                │
+│                                                                 │
+│ RÉACTION: Si perte de puissance soudaine, LEVER LE PIED        │
+│ PROBABILITÉ: Faible — Circuit protégé (BTS5090, TVS/MOV)       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔴 CORRECTIONS CRITIQUES v4.2
+
+| Correction | Problème résolu |
+|------------|-----------------|
+| ❌ **Check valve SUPPRIMÉE** | Ligne vacuum → pressostat piégeait la pression → valve bloquée ouverte |
+| ✅ **Régulateur SMC IR1000-01BG** | Compresseur 90 PSI vs actionneur 7 PSI = ratio 13× → destruction membrane |
+| ✅ **Gaine aluminisée** | Protection thermique 50cm section actionneur |
+
+---
 
 ## Véhicule
 
 - **Modèle** : Ford Mustang EcoBoost 2016
-- **Configuration** : Stage 4+ E85
+- **Configuration** : Stage 4+ E85 (600+ ch)
 - **Équipement existant** : OPR V2, Plunger, Drain correct
-
-## Contexte
-
-Redémarrage après 1 mois. Fumée blanche à froid due à la condensation. Disparition à chaud.
-
-**Pressions mesurées à chaud :**
-- Moteur : 35 psi au ralenti
-- Ligne turbo : 28 psi avant plunger
-- État : RAS
 
 ## Objectif
 
@@ -30,79 +53,76 @@ Ouvrir automatiquement la valve d'échappement en charge pour éviter toute cont
 | Pression entrée turbo après plunger (ralenti) | 15 - 30 psi | - |
 | Pression entrée turbo après plunger (haut régime) | 40 - 45 psi | - |
 
-> **Certitude : 9/10** - Sources mixtes atelier et docs fabricants
+---
 
-## Solution Pneumatique
+## Schéma Pneumatique v4.2
 
-### Détection
-- **Pressostat boost NO** réglé à 0,20 - 0,25 bar sur ligne MAP
-- **Hystérésis** ≥ 0,05 bar
-
-### Action
-- **Électrovanne 3/2** : temps de réponse ≤ 15 ms, orifice ≥ 2,5 mm
-- **Placement** : < 20 cm de l'actionneur
-
-### Variantes Disponibles
-
-| Variante | Principe | Source | Documentation |
-|----------|----------|--------|---------------|
-| **A** | Actionneur fermé par vide | Collecteur admission | [Détails](docs/variante-A-vide.md) |
-| **B** | Actionneur ouvert par pression | Boost après intercooler | [Détails](docs/variante-B-pression.md) |
-
-## Commande Électrique
-
+### Ligne Détection (Pressostat)
 ```
-+12V après contact
-    │
-    ├── Fusible 5A
-    │
-    ├── TVS 1.5KE18CA (protection)
-    │
-    ├── Relais 12V 30A + diode 1N5819
-    │
-    └── Inter SPDT 3 positions
-        ├── Fermé
-        ├── Auto
-        └── Ouvert
+❌ ZÉRO CHECK VALVE SUR CETTE LIGNE
+Collecteur admission → Durite Ø6mm LIBRE → Passe-cloison → SMC ISE30A-01-N
 ```
 
-### Câblage
-- **Puissance** : 1,5 mm²
-- **Commande** : 1,0 mm²
-- **Masse** : châssis propre
-
-📄 [Schéma électrique détaillé](docs/schema-electrique.md)
-
-## Documentation
-
-- 📋 [Spécifications techniques](docs/specifications.md)
-- 🔧 [Variante A - Vide](docs/variante-A-vide.md)
-- 🔧 [Variante B - Pression](docs/variante-B-pression.md)
-- ⚡ [Schéma électrique](docs/schema-electrique.md)
-- ✅ [Procédures de validation](docs/validation.md)
-- 🛒 [Liste des composants (BOM)](bom/bill-of-materials.md)
-
-## Validation
-
-- [ ] Seuil pressostat 0,20 - 0,25 bar vérifié
-- [ ] Test statique pompe à main OK
-- [ ] Mesure contre-pression en charge (Auto) < 1,5 psi
-- [ ] (Optionnel) Pression après plunger @ 2000/3000 tr/min
-
-## Modes d'Utilisation
-
-| Mode | Position Inter | Usage |
-|------|----------------|-------|
-| **Fermé** | Position 1 | Ville, autoroute (silencieux) |
-| **Auto** | Position 2 | Ouverture automatique dès 0,20-0,25 bar MAP |
-| **Ouvert** | Position 3 | Bypass manuel permanent |
-
-## License
-
-MIT License - Voir [LICENSE](LICENSE)
+### Ligne Commande (Actionnement)
+```
+Compresseur HS-551 (90-120 PSI)
+         │
+         ▼
+      Té → Klaxon
+         │
+         ▼
+  SMC IR1000-01BG (réglé 1 bar)  ← NOUVEAU v4.2
+         │
+         ▼
+    MAC 35A port P(1)
+         │
+         ▼ Port A(2)
+    Gaine aluminisée 50cm → Actionneur valve
+```
 
 ---
 
-**Projet** : Circuit valve échappement automatique  
-**Véhicule** : Mustang EcoBoost 2016 Stage 4+ E85  
+## Documentation
+
+### Circuit v4.2
+- 🔴 [**Circuit VALVE v4.2**](docs/circuit-valve-v4.2.md) ← **DOCUMENT PRINCIPAL**
+- 🛒 [**BOM v4.2**](bom/bill-of-materials.md) ← **Liste composants**
+
+### Guides
+- 📋 [Spécifications techniques](docs/specifications.md)
+- ⚡ [Schéma électrique](docs/schema-electrique.md)
+- 🔧 [Installation & cheminement](docs/installation-cheminement.md)
+- ✅ [Procédures de validation](docs/validation.md)
+
+---
+
+## Composants Critiques v4.2
+
+| Composant | Référence | Fonction |
+|-----------|-----------|----------|
+| Régulateur pression | **SMC IR1000-01BG** | 90 PSI → 1 bar |
+| Pressostat | **SMC ISE30A-01-N** | Détection boost NPN |
+| Électrovanne | **MAC 35A 3/2 NC** | Commande actionneur |
+| Driver | **BTS5090-1EJAXUMA1** | Smart high-side switch |
+
+**Coût estimé : ~430-610 €**
+
+---
+
+## Modes d'Utilisation
+
+| Mode | Usage |
+|------|-------|
+| **Fermé** | Ville, autoroute (silencieux) |
+| **Auto** | Ouverture dès 0,20-0,25 bar MAP |
+| **Ouvert** | Bypass manuel permanent |
+
+---
+
+## License
+
+MIT License
+
+**Projet** : Circuit valve échappement automatique v4.2  
+**Véhicule** : Mustang EcoBoost 2016 Stage 4+ E85 (600+ ch)  
 **Auteur** : @mmmprod
