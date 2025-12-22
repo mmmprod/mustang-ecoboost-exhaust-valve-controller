@@ -192,7 +192,7 @@ Hystérésis = 0,8 psi ✅
 
 ```
 ═══════════════════════════════════════════════════════
-         FICHE DE VALIDATION - CIRCUIT VALVE v4.1
+         FICHE DE VALIDATION - CIRCUIT VALVE v4.5
 ═══════════════════════════════════════════════════════
 
 Date : _______________
