@@ -1,129 +1,220 @@
-# Valve d'Échappement Automatique - Mustang EcoBoost 2016
+# 🏎️ Mustang EcoBoost Exhaust Valve Controller
 
-## Circuit VALVE v4.2
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-4.4-blue.svg)](https://github.com/mmmprod/mustang-ecoboost-exhaust-valve-controller)
+[![Platform](https://img.shields.io/badge/platform-Ford%20Mustang%20EcoBoost-red.svg)](#)
+[![Power](https://img.shields.io/badge/power-600%2B%20HP-orange.svg)](#)
+[![Made with](https://img.shields.io/badge/made%20with-love%20%26%20boost-ff69b4.svg)](#)
 
-Circuit pneumatique et électrique pour contrôle automatique de valve d'échappement.
-
----
-
-## ⚠️ AVERTISSEMENT SÉCURITÉ
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    ⚠️ FAIL-SAFE VALVE                           │
-├─────────────────────────────────────────────────────────────────┤
-│ L'actionneur est FAIL-CLOSED (ressort ferme, pression ouvre).   │
-│                                                                 │
-│ En cas de panne électrique ou pneumatique en pleine charge:     │
-│ → La valve se FERME → BACKPRESSURE sur le turbo                │
-│                                                                 │
-│ RÉACTION: Si perte de puissance soudaine, LEVER LE PIED        │
-│ PROBABILITÉ: Faible — Circuit protégé (BTS5090, TVS/MOV)       │
-└─────────────────────────────────────────────────────────────────┘
-```
+> **Automatic exhaust valve control based on boost pressure detection.**  
+> *Because your neighbors don't need to know you're running 600+ HP... until you want them to.*
 
 ---
 
-## 🔴 CORRECTIONS CRITIQUES v4.2
+## 🎯 What Is This?
 
-| Correction | Problème résolu |
-|------------|-----------------|
-| ❌ **Check valve SUPPRIMÉE** | Ligne vacuum → pressostat piégeait la pression → valve bloquée ouverte |
-| ✅ **Régulateur SMC IR1000-01BG** | Compresseur 90 PSI vs actionneur 7 PSI = ratio 13× → destruction membrane |
-| ✅ **Gaine aluminisée** | Protection thermique 50cm section actionneur |
+A fully analog, automotive-grade control system that **automatically opens your exhaust valve when boost kicks in**. No ECU tuning, no CAN bus hacking, no check engine lights. Just pure pneumatic simplicity.
+
+```
+📍 Boost detected (2.9 psi) → 💨 Valve opens → 🔊 BRAAAP
+📍 Boost drops (2.0 psi)   → 🔇 Valve closes → 🤫 Quiet mode
+```
+
+**Manual override?** One-touch toggle button with LED feedback. Press once = valve open. Press again = back to auto.
 
 ---
 
-## Véhicule
+## 🚀 Features
 
-- **Modèle** : Ford Mustang EcoBoost 2016
-- **Configuration** : Stage 4+ E85 (600+ ch)
-- **Équipement existant** : OPR V2, Plunger, Drain correct
-
-## Objectif
-
-Ouvrir automatiquement la valve d'échappement en charge pour éviter toute contre-pression, avec un mode manuel "toujours ouvert".
-
-## Cibles Techniques
-
-| Paramètre | Valeur cible | Acceptable |
-|-----------|--------------|------------|
-| Contre-pression turbine-out (valve ouverte) | < 1,5 psi | 1,5 - 3 psi |
-| Pression huile moteur (ralenti chaud) | 25 - 35 psi | - |
-| Pression entrée turbo après plunger (ralenti) | 15 - 30 psi | - |
-| Pression entrée turbo après plunger (haut régime) | 40 - 45 psi | - |
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Boost-Activated** | SMC ISE30A digital pressure switch with configurable thresholds |
+| 🔄 **Fail-Safe Design** | Valve closes on power loss (spring-return actuator) |
+| ⚡ **Automotive Grade** | ISO 7637-2 transient protection, -40°C to +85°C operation |
+| 🛡️ **Triple Surge Protection** | TVS + MOV + Ferrite filtering |
+| 🔘 **One-Touch Override** | Toyota-style 22mm LED button for manual control |
+| 🔧 **5-Second Diagnostics** | LED + TEST button for instant system check |
+| 📊 **Test Interface** | 12-pin connector for automated validation |
 
 ---
 
-## Schéma Pneumatique v4.2
+## 📦 What's Included
 
-### Ligne Détection (Pressostat)
-```
-❌ ZÉRO CHECK VALVE SUR CETTE LIGNE
-Collecteur admission → Durite Ø6mm LIBRE → Passe-cloison → SMC ISE30A-01-N
-```
+### Hardware Design
 
-### Ligne Commande (Actionnement)
+| File | Description |
+|------|-------------|
+| [`VALVE_v4_4.docx`](./VALVE_v4_4.docx) | Complete circuit documentation with BOM |
+
+### Test Equipment (Optional)
+
+| File | Description |
+|------|-------------|
+| [`BreakoutBox_V1.2.ino`](./BreakoutBox_V1.2.ino) | ESP32-C6 firmware for automated testing |
+| [`BreakoutBox_Circuit_V1.2.md`](./BreakoutBox_Circuit_V1.2.md) | Breakout box schematic |
+| [`User_Setup_C6_LCD.h`](./User_Setup_C6_LCD.h) | TFT_eSPI configuration for Waveshare LCD |
+
+---
+
+## 🔧 System Overview
+
 ```
-Compresseur HS-551 (90-120 PSI)
-         │
-         ▼
-      Té → Klaxon
-         │
-         ▼
-  SMC IR1000-01BG (réglé 1 bar)  ← NOUVEAU v4.2
-         │
-         ▼
-    MAC 35A port P(1)
-         │
-         ▼ Port A(2)
-    Gaine aluminisée 50cm → Actionneur valve
+                                    ┌─────────────────┐
+                                    │   EXHAUST VALVE │
+                                    │   (Pneumatic)   │
+                                    └────────▲────────┘
+                                             │
+┌──────────────┐    ┌─────────────┐    ┌─────┴─────┐
+│  INTAKE      │    │  CONTROL    │    │  MAC 35A  │
+│  MANIFOLD    │───▶│  UNIT       │───▶│  SOLENOID │
+│  (Boost)     │    │  (Trunk)    │    │           │
+└──────────────┘    └─────────────┘    └───────────┘
+       │                  │
+       │            ┌─────┴─────┐
+       │            │  BUTTON   │
+       └───────────▶│  (Cabin)  │
+     Pressure       └───────────┘
+     Signal         Manual Override
 ```
 
 ---
 
-## Documentation
+## ⚡ Quick Specs
 
-### Circuit v4.2
-- 🔴 [**Circuit VALVE v4.2**](docs/circuit-valve-v4.2.md) ← **DOCUMENT PRINCIPAL**
-- 🛒 [**BOM v4.2**](bom/bill-of-materials.md) ← **Liste composants**
-
-### Guides
-- 📋 [Spécifications techniques](docs/specifications.md)
-- ⚡ [Schéma électrique v4.2](docs/schema-electrique.md)
-- 💨 [Schéma pneumatique v4.2](docs/schema-pneumatique.md)
-- 🔧 [Installation & cheminement v4.2](docs/installation-cheminement.md)
-- ✅ [Procédures de validation](docs/validation.md)
-
----
-
-## Composants Critiques v4.2
-
-| Composant | Référence | Fonction |
-|-----------|-----------|----------|
-| Régulateur pression | **SMC IR1000-01BG** | 90 PSI → 1 bar |
-| Pressostat | **SMC ISE30A-01-N** | Détection boost NPN |
-| Électrovanne | **MAC 35A 3/2 NC** | Commande actionneur |
-| Driver | **BTS5090-1EJAXUMA1** | Smart high-side switch |
-
-**Coût estimé : ~430-610 €**
+| Parameter | Value |
+|-----------|-------|
+| Operating Voltage | 9-16V DC (automotive 12V) |
+| Quiescent Current | < 5mA |
+| Boost Threshold ON | 2.9 - 3.6 psi (configurable) |
+| Boost Threshold OFF | 2.0 - 2.9 psi (configurable) |
+| Hysteresis | ≥ 0.7 psi |
+| Response Time | < 50ms |
+| Operating Temperature | -40°C to +85°C |
+| Solenoid | MAC 35A 3/2 NC 12V |
+| Pressure Switch | SMC ISE30A-01-N |
 
 ---
 
-## Modes d'Utilisation
+## 🛠️ Installation
 
-| Mode | Usage |
-|------|-------|
-| **Fermé** | Ville, autoroute (silencieux) |
-| **Auto** | Ouverture dès 0,20-0,25 bar MAP |
-| **Ouvert** | Bypass manuel permanent |
+### 1. Pressure Detection Line
+```
+Intake Manifold → 6mm tubing → Trunk → SMC ISE30A
+```
+⚠️ **NO CHECK VALVE** on this line (needs to see both pressure and vacuum)
+
+### 2. Pneumatic Command Line
+```
+Air Compressor (90-120 PSI) → Regulator (15 PSI) → MAC Solenoid → Actuator
+```
+⚠️ **Regulator MANDATORY** - Actuator rated for 7 PSI max!
+
+### 3. Electrical
+```
++12V ACC → Relay → Control Unit → MAC Solenoid
+                 → Button (cabin)
+```
 
 ---
 
-## License
+## 🔍 5-Second Diagnostics
 
-MIT License
+Open your trunk. Look at the control box:
 
-**Projet** : Circuit valve échappement automatique v4.2  
-**Véhicule** : Mustang EcoBoost 2016 Stage 4+ E85 (600+ ch)  
-**Auteur** : @mmmprod
+| Step | Action | Expected | If FAIL |
+|------|--------|----------|---------|
+| 1 | Check green LED | ON | No power: fuse, relay, wiring |
+| 2 | Press TEST button | Button LED ON | Signal chain broken |
+| 3 | Release TEST | Button LED OFF | System OK ✅ |
+
+---
+
+## 🧪 Breakout Box (Optional)
+
+For builders who want automated testing:
+
+![ESP32-C6-LCD](https://www.waveshare.com/w/upload/thumb/6/6e/ESP32-C6-LCD-1.47-1.jpg/300px-ESP32-C6-LCD-1.47-1.jpg)
+
+**Hardware:** Waveshare ESP32-C6-LCD-1.47 (~$20)
+
+**Features:**
+- Real-time voltage monitoring (+12V, +5V, signals)
+- Current measurement (INA219)
+- Automated stimulation tests
+- GO/NO-GO verdict in 10 seconds
+
+---
+
+## 📋 Bill of Materials (Highlights)
+
+| Component | Reference | ~Price |
+|-----------|-----------|--------|
+| Pressure Switch | SMC ISE30A-01-N | $80 |
+| Solenoid Valve | MAC 35A-AAA-DDBA-1BA | $45 |
+| Pressure Regulator | SMC IR1000-01BG | $35 |
+| High-Side Driver | Infineon BTS5090-1EJA | $3 |
+| Toyota Button 22mm | LED illuminated | $8 |
+| Relay | Omron G5Q-1-HA-DC12 | $4 |
+
+**Full BOM in [`VALVE_v4_4.docx`](./VALVE_v4_4.docx)**
+
+---
+
+## ⚠️ Safety Notice
+
+This system is designed **fail-safe**:
+
+> **Power loss = Valve CLOSES = Increased backpressure**
+
+If you experience sudden power loss while on boost:
+1. **Lift off throttle immediately**
+2. Check fuse and wiring
+3. System will not damage engine, but performance will be reduced
+
+---
+
+## 🏁 Tested On
+
+- **2016 Ford Mustang EcoBoost**
+- **Stage 4+ E85 tune**
+- **600+ HP / 550+ TQ**
+- **Daily driven + track days**
+
+---
+
+## 🤝 Contributing
+
+Found a bug? Have an improvement? PRs welcome!
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- SMC Corporation for quality pneumatic components
+- Infineon for bulletproof automotive drivers
+- The EcoBoost community for pushing these turbos to the limit
+
+---
+
+<p align="center">
+  <b>Built with boost. Tested with passion.</b><br>
+  <i>Because 600 HP should sound like 600 HP... when you want it to.</i>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/BOOST-ON-brightgreen?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/VALVE-OPEN-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/NEIGHBORS-SORRY-red?style=for-the-badge" />
+</p>
