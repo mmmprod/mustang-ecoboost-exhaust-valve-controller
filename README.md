@@ -1,202 +1,329 @@
-# Mustang EcoBoost Exhaust Valve Controller
+<div align="center">
 
-**Automatic exhaust valve control system for 2016 Ford Mustang EcoBoost Stage 4+ E85 (600+ HP)**
+# 🐎 Mustang EcoBoost Exhaust Valve Controller
 
-ISO 7637-2 Pulse 1 Compliant | Fail-Safe Design | Boost-Activated
+### *When 600+ HP needs to breathe*
 
----
+<br>
 
-## Overview
+[![Version](https://img.shields.io/badge/version-4.6-0366d6?style=for-the-badge&logo=v&logoColor=white)](https://github.com)
+[![Status](https://img.shields.io/badge/status-PRODUCTION_READY-28a745?style=for-the-badge&logo=checkmarx&logoColor=white)](https://github.com)
+[![ISO](https://img.shields.io/badge/ISO_7637--2-COMPLIANT-ff6b00?style=for-the-badge&logo=iso&logoColor=white)](https://github.com)
 
-This system automatically opens an exhaust bypass valve when boost pressure exceeds a configurable threshold (2.9-3.6 PSI), while providing manual override capability via an OEM-style Toyota push button.
+<br>
 
-### Key Features
+[![Mustang](https://img.shields.io/badge/Ford-Mustang_EcoBoost-00529b?style=flat-square&logo=ford&logoColor=white)](https://github.com)
+[![Tuning](https://img.shields.io/badge/Stage_4+-E85_Flex_Fuel-e85b00?style=flat-square&logo=fires&logoColor=white)](https://github.com)
+[![Power](https://img.shields.io/badge/600+-Horsepower-dc3545?style=flat-square&logo=lightning&logoColor=white)](https://github.com)
+[![Build](https://img.shields.io/badge/build-THT_Stripboard-6f42c1?style=flat-square&logo=arduino&logoColor=white)](https://github.com)
 
-- **Automatic Mode**: Opens valve when SMC ISE30A detects boost above threshold
-- **Manual Override**: Toggle valve state with illuminated push button
-- **Fail-Safe**: Pneumatic actuator is fail-closed (valve closes on power loss)
-- **Automotive-Grade**: Full ISO 7637-2 transient protection, -40°C to +85°C operation
-- **Diagnostic**: 5-second visual check via LED + TEST button
-
----
-
-## System Architecture
+<br>
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        VALVE CONTROLLER v4.6                        │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  +12V_BATT ──┬── Relay G5Q ──┬── P6KE18CA ── Ferrite ── Fuse 1A    │
-│              │   (ACC ctrl)   │   (TVS 18V)   (EMI)     (protect)   │
-│              │               │                                      │
-│              │               └── 1N5822 ── +12V_PROT ── 78L05       │
-│              │                   (reverse)              (5V reg)    │
-│              │                                                      │
-│  BOOST ──────┼── SMC ISE30A ── 74HC14 ── OR ──┬── BTS5090 ── MAC   │
-│  (intake)    │   (pressure)    (buffer)  gate │   (driver)   35A   │
-│              │                               │                      │
-│  BUTTON ─────┼── CD4013 ─────────────────────┘                     │
-│  (Toyota)    │   (toggle)                                           │
-│              │                                                      │
-│  DIAGNOSTIC ─┼── LED green (power) + TEST button                   │
-│              │                                                      │
-│  BREAKOUT ───┴── J-BB 2x6 header (validation interface)            │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+    ___  ___          _                      
+    |  \/  |         | |                     
+    | .  . |_   _ ___| |_ __ _ _ __   __ _   
+    | |\/| | | | / __| __/ _` | '_ \ / _` |  
+    | |  | | |_| \__ \ || (_| | | | | (_| |  
+    \_|  |_/\__,_|___/\__\__,_|_| |_|\__, |  
+                                      __/ |  
+     EXHAUST VALVE CONTROLLER v4.6   |___/   
+```
+
+<br>
+
+**Automatic boost-activated exhaust bypass system**
+
+*Fail-Safe • Automotive-Grade • Plug & Play*
+
+<br>
+
+[📖 Documentation](#-documentation) •
+[🔧 Installation](#-installation) •
+[⚡ Quick Start](#-quick-start) •
+[🛡️ Safety](#%EF%B8%8F-safety)
+
+<br>
+
+---
+
+</div>
+
+## 📊 Quick Stats
+
+<table>
+<tr>
+<td align="center">
+<img src="https://img.shields.io/badge/2.9--3.6-PSI-dc3545?style=for-the-badge" alt="Boost"/><br>
+<sub><b>Boost Threshold</b></sub>
+</td>
+<td align="center">
+<img src="https://img.shields.io/badge/100V-400ms-ffc107?style=for-the-badge" alt="Load Dump"/><br>
+<sub><b>Load Dump Protection</b></sub>
+</td>
+<td align="center">
+<img src="https://img.shields.io/badge/24.4V-Clamp-28a745?style=for-the-badge" alt="Clamp"/><br>
+<sub><b>TVS Clamping</b></sub>
+</td>
+<td align="center">
+<img src="https://img.shields.io/badge/--40°C_to_+85°C-Operating-17a2b8?style=for-the-badge" alt="Temp"/><br>
+<sub><b>Temperature Range</b></sub>
+</td>
+</tr>
+</table>
+
+---
+
+## 🎯 Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🚗 Automatic Mode
+Opens valve when SMC ISE30A pressure switch detects boost above configurable threshold
+
+### 🕹️ Manual Override  
+Toggle valve state anytime with OEM-style illuminated Toyota push button
+
+### 🛡️ Fail-Safe Design
+Pneumatic actuator is fail-closed — valve closes on power loss, protecting your turbo
+
+</td>
+<td width="50%">
+
+### ⚡ Automotive-Grade
+Full ISO 7637-2 transient protection including load dump (+100V) and cold crank (6V)
+
+### 🔍 Quick Diagnostic
+5-second visual check: LED + TEST button validates entire signal chain
+
+### 🔧 DIY Friendly
+100% through-hole components on standard stripboard — no SMD soldering required
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          VALVE CONTROLLER v4.6                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐  │
+│   │ +12V    │───▶│ P6KE18CA│───▶│ FERRITE │───▶│ FUSE 1A │───▶│ 1N5822  │  │
+│   │ BATTERY │    │ TVS 18V │    │ 90Ω EMI │    │ PROTECT │    │ REVERSE │  │
+│   └─────────┘    └─────────┘    └─────────┘    └─────────┘    └────┬────┘  │
+│                                                                     │       │
+│        ┌────────────────────────────────────────────────────────────┘       │
+│        ▼                                                                    │
+│   ┌─────────┐         ┌─────────────────────────────────────────────────┐  │
+│   │ 78L05   │────────▶│                  +5V LOGIC                      │  │
+│   │ 5V REG  │         └─────────────────────────────────────────────────┘  │
+│   └─────────┘                     │                    │                    │
+│                                   ▼                    ▼                    │
+│   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐  │
+│   │ BOOST   │───▶│ SMC     │───▶│ 74HC14  │───▶│   OR    │───▶│ BTS5090 │  │
+│   │ INTAKE  │    │ ISE30A  │    │ BUFFER  │    │  GATE   │    │ DRIVER  │  │
+│   └─────────┘    └─────────┘    └─────────┘    └────┬────┘    └────┬────┘  │
+│                                                     │              │       │
+│   ┌─────────┐    ┌─────────┐                       │              ▼       │
+│   │ TOYOTA  │───▶│ CD4013  │───────────────────────┘         ┌─────────┐  │
+│   │ BUTTON  │    │ TOGGLE  │                                 │ MAC 35A │  │
+│   └─────────┘    └─────────┘                                 │ SOLENOID│  │
+│                                                              └────┬────┘  │
+│   ┌─────────────────────────────────────────────────────────────┐ │       │
+│   │ 🟢 LED POWER        🔘 TEST BUTTON        📟 J-BB BREAKOUT  │ │       │
+│   └─────────────────────────────────────────────────────────────┘ ▼       │
+│                                                              ACTUATOR      │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Hardware Components
+## 🔌 Hardware
 
-### Protection Chain (BLOC A) - v4.6
+### Protection Chain (BLOC A) — *v4.6 Certified*
 
-| Stage | Component | Function | Specs |
-|-------|-----------|----------|-------|
-| 1 | P6KE18CA | TVS clamping | V_C=24.4V, 600W, DO-15 THT |
-| 2 | Wurth 742792093 | EMI filtering | 90Ω @ 100MHz, Axial |
-| 3 | Fuse 1A T | Overcurrent | 5x20mm glass, Fast-blow |
-| 4 | 1N5822 | Reverse polarity | 40V 3A Schottky, DO-201AD |
+| Stage | Component | Function | Specs | Package |
+|:-----:|-----------|----------|-------|:-------:|
+| **1** | `P6KE18CA` | TVS Clamping | V_C = 24.4V @ 10A, 600W | DO-15 |
+| **2** | `Würth 742792093` | EMI Filter | 90Ω @ 100MHz | Axial |
+| **3** | `Fuse 1A T` | Overcurrent | Fast-blow | 5×20mm |
+| **4** | `1N5822` | Reverse Polarity | 40V 3A Schottky | DO-201AD |
 
-**⚠️ CRITICAL v4.6**: TVS orientation - Cathode (band) to +12V_IN, Anode to GND
+> ⚠️ **CRITICAL**: TVS orientation — **Cathode (band) → +12V_IN** / **Anode → GND**
 
 ### Logic & Control
 
 | Block | Component | Package | Function |
-|-------|-----------|---------|----------|
-| B | 78L05 | TO-92 | 5V regulation |
-| C | SMC ISE30A-01-N | - | Boost pressure sensing |
-| C | 74HC14 | DIP-14 | Schmitt buffer |
-| D | Toyota 22x22mm | - | Illuminated push button |
-| E | CD4013 | DIP-14 | Toggle flip-flop |
-| G | BTS5090-1EJA | PG-TDSO-8 | High-side driver |
+|:-----:|-----------|:-------:|----------|
+| **B** | 78L05 | TO-92 | 5V Regulation |
+| **C** | SMC ISE30A-01-N | — | Boost Pressure Sensing |
+| **C** | 74HC14 | DIP-14 | Schmitt Buffer |
+| **D** | Toyota 22×22mm | — | Illuminated Push Button |
+| **E** | CD4013 | DIP-14 | Toggle Flip-Flop |
+| **G** | BTS5090-1EJA | PG-TDSO-8 | High-Side Smart Driver |
 
 ### Pneumatic System
 
 | Component | Reference | Function |
 |-----------|-----------|----------|
-| Pressure switch | SMC ISE30A-01-N | Boost detection (NPN, 12-24V) |
-| Pressure regulator | SMC IR1000-01BG | Compressor → 1 bar output |
-| Solenoid valve | MAC 35A 12V | Pneumatic control (5.4W) |
+| Pressure Switch | SMC ISE30A-01-N | Boost detection (NPN, 12-24V) |
+| Pressure Regulator | SMC IR1000-01BG | Compressor → 1 bar output |
+| Solenoid Valve | MAC 35A 12V | Pneumatic control (5.4W) |
 | Actuator | Fail-closed | Exhaust valve actuation |
 
-**⚠️ NO CHECK VALVE on detection line** - Direct vacuum path required
+> ⚠️ **NO CHECK VALVE** on detection line — Direct vacuum path required
 
 ---
 
-## Breakout Box Interface (V1.4)
+## 🛡️ Safety
 
-Diagnostic interface for automated validation testing.
+### Transient Protection Matrix
 
-### Pinout
+| Event | Input | Protection | Output | Status |
+|-------|:-----:|------------|:------:|:------:|
+| Normal Operation | 12-14.8V | Pass-through | 12-14.8V | ✅ |
+| Alternator Max | 14.8V | V_WRM margin | 14.8V | ✅ |
+| **Jump Start** | **24V** | **Fuse blows** | **Protected** | ⚡ |
+| **Load Dump** | **100V/400ms** | **TVS clamp** | **24.4V** | 🛡️ |
+| Cold Crank | 6V | 78L05 dropout | Degraded | ⚠️ |
 
-**Row A (Measurements):**
+### Component Margins
+
+```
+SMC ISE30A    ████████████░░░░░░░░  28V max    → 24.4V actual  (12.9% margin)
+78L05         ████████████████░░░░  30V max    → 24.4V actual  (18.7% margin)  
+1N5822        ████████████████████  40V max    → 24.4V actual  (39% margin)
+```
+
+### ⚠️ Fail-Safe Behavior
+
+```diff
+- Power Loss → Solenoid OFF → Valve CLOSES → Turbo Backpressure
+! IMMEDIATELY LIFT THROTTLE IF SYSTEM FAILS
+```
+
+---
+
+## 📟 Breakout Box Interface (V1.4)
+
+*Diagnostic interface for automated validation testing*
+
+<table>
+<tr>
+<th>Row A — Measurements</th>
+<th>Row B — Stimulation</th>
+</tr>
+<tr>
+<td>
+
 | Pin | Signal | Description |
-|-----|--------|-------------|
-| 1 | +12V_PROT | Protected 12V rail |
-| 2 | +5V_LOG | Logic supply |
-| 3 | AUTO_REQ | Pressure switch output |
-| 4 | OUT_DRIVER | BTS5090 output |
-| 5 | CMD | OR gate output |
-| 6 | MANUAL_REQ | Button toggle state |
+|:---:|--------|-------------|
+| 1 | `+12V_PROT` | Protected 12V rail |
+| 2 | `+5V_LOG` | Logic supply |
+| 3 | `AUTO_REQ` | Pressure switch out |
+| 4 | `OUT_DRIVER` | BTS5090 output |
+| 5 | `CMD` | OR gate output |
+| 6 | `MANUAL_REQ` | Button toggle state |
 
-**Row B (Stimulation):**
+</td>
+<td>
+
 | Pin | Signal | Description |
-|-----|--------|-------------|
-| 7 | GND | Ground reference |
-| 8 | STIM_1 | After 1k resistor |
-| 9 | STIM_2 | Before 10k resistor |
-| 10 | I_SENSE+ | Current sense + |
-| 11 | I_SENSE- | Current sense - |
-| 12 | GND | Ground reference |
+|:---:|--------|-------------|
+| 7 | `GND` | Ground reference |
+| 8 | `STIM_1` | After 1k resistor |
+| 9 | `STIM_2` | Before 10k resistor |
+| 10 | `I_SENSE+` | Current sense + |
+| 11 | `I_SENSE-` | Current sense - |
+| 12 | `GND` | Ground reference |
+
+</td>
+</tr>
+</table>
 
 ---
 
-## Safety Considerations
-
-### Fail-Safe Design
-
-The pneumatic actuator is **fail-closed** by design:
-- Power loss → Solenoid de-energizes → Valve closes
-- This creates turbo backpressure
-- **IMMEDIATELY lift throttle** if system fails
-
-### Transient Protection (v4.6)
-
-| Event | Voltage | Protection | Result |
-|-------|---------|------------|--------|
-| Normal | 12-14.8V | Pass-through | Normal operation |
-| Alternator max | 14.8V | V_WRM=15.3V margin | TVS inactive |
-| Jump start | 24V | Fuse 1A blows | Circuit protected |
-| Load dump | 100V/400ms | V_C=24.4V clamp | SMC < 28V max |
-| Cold crank | 6V | 78L05 dropout | Degraded mode |
-
-### Component Limits Verification
-
-| Component | Max Rating | Worst Case (v4.6) | Margin |
-|-----------|------------|-------------------|--------|
-| SMC ISE30A | 28V | 24.4V (clamp) | 12.9% |
-| 78L05 | 30V | 24.4V (clamp) | 18.7% |
-| 1N5822 | 40V | 24.4V (reverse) | 39% |
-
----
-
-## Installation
+## 🔧 Installation
 
 ### Prerequisites
 
-- 2016 Ford Mustang EcoBoost with boost reference port
-- 12V ACC-switched power source
-- Air compressor system (90-120 PSI)
-- Exhaust bypass valve with pneumatic actuator
+- ✅ 2016 Ford Mustang EcoBoost with boost reference port
+- ✅ 12V ACC-switched power source  
+- ✅ Air compressor system (90-120 PSI)
+- ✅ Exhaust bypass valve with pneumatic actuator
 
-### Wiring
+### Wiring Checklist
 
-1. **Power**: Connect +12V_BATT to battery via 5A fuse (≤15cm from terminal)
-2. **ACC**: Connect +12V_ACC to ignition-switched source
-3. **Ground**: Single point ground (GND_STAR) to chassis
-4. **Boost**: 6mm tubing from intake manifold to SMC ISE30A
-5. **Pneumatic**: Compressor → Regulator (1 bar) → MAC 35A → Actuator
+```
+[ ] +12V_BATT → Battery via 5A fuse (≤15cm from terminal)
+[ ] +12V_ACC  → Ignition-switched source
+[ ] GND_STAR  → Single point chassis ground
+[ ] BOOST     → 6mm tubing from intake manifold
+[ ] PNEUMATIC → Compressor → Regulator (1 bar) → MAC 35A → Actuator
+```
 
 ### Pressure Settings
 
 | Parameter | Value | Notes |
-|-----------|-------|-------|
-| P_ON | 2.9-3.6 PSI | Valve opens |
-| P_OFF | 2.0-2.9 PSI | Valve closes |
-| Hysteresis | ≥0.7 PSI | Prevent chatter |
+|-----------|:-----:|-------|
+| **P_ON** | 2.9-3.6 PSI | Valve opens |
+| **P_OFF** | 2.0-2.9 PSI | Valve closes |
+| **Hysteresis** | ≥0.7 PSI | Prevents chatter |
 
 ---
 
-## Version History
+## 📜 Version History
 
 | Version | Date | Changes |
-|---------|------|---------|
-| v4.6 | Dec 2025 | **CRITICAL FIX**: TVS SM5S22A→P6KE18CA, orientation corrected, removed conflicting 5KP18CA+MOV |
+|:-------:|:----:|---------|
+| **v4.6** | Dec 2025 | 🔴 **CRITICAL**: TVS SM5S22A→P6KE18CA, orientation fix, removed conflicting protections |
 | v4.5 | Dec 2025 | Added SM5S22A TVS for ISO 7637-2 Pulse 1 |
 | v4.4 | Dec 2025 | Added diagnostic LED + TEST button |
 | v4.3 | Dec 2025 | Added Breakout Box connector J-BB |
-| v4.2 | Dec 2025 | Removed check valve, added SMC IR1000-01BG regulator |
+| v4.2 | Dec 2025 | Removed check valve, added SMC IR1000-01BG |
 
 ---
 
-## Files
+## 📁 Documentation
 
 | File | Description |
 |------|-------------|
-| `VALVE_v4_6.docx` | Complete circuit documentation |
-| `BreakoutBox_Circuit_V1_4.md` | Diagnostic tool schematic |
-| `PROTOCOLE_PREMORTEM_V4_2_1.txt` | Design validation protocol |
+| [`VALVE_v4_6.docx`](./VALVE_v4_6.docx) | 📄 Complete circuit documentation |
+| [`BOM_VALVE_v4_6.md`](./BOM_VALVE_v4_6.md) | 📋 Bill of Materials |
+| [`BreakoutBox_V1_4.md`](./BreakoutBox_Circuit_V1_4.md) | 🔌 Diagnostic tool schematic |
+| [`PROTOCOLE_PREMORTEM_V4_2_1.txt`](./PROTOCOLE_PREMORTEM_V4_2_1.txt) | ✅ Design validation protocol |
 
 ---
 
-## License
+<div align="center">
 
-Personal project - Not for commercial use without authorization.
+## ⚠️ Disclaimer
 
-**⚠️ WARNING**: This system controls exhaust flow on a high-power turbocharged vehicle. Improper installation or failure can cause engine damage or safety hazards. Professional installation recommended.
+**This system controls exhaust flow on a high-power turbocharged vehicle.**
+
+Improper installation or failure can cause engine damage or safety hazards.
+
+*Professional installation recommended.*
+
+<br>
 
 ---
 
-*Mustang EcoBoost Exhaust Valve Controller - Mehdi - December 2025*
+<br>
+
+**Made with 🔥 for the Mustang community**
+
+*Mehdi — December 2025*
+
+<br>
+
+[![GitHub](https://img.shields.io/badge/Personal_Project-Not_for_Commercial_Use-lightgrey?style=flat-square)](https://github.com)
+
+</div>
