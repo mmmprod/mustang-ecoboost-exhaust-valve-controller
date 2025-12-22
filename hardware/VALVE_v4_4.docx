@@ -1,0 +1,158 @@
+Circuit VALVE v4.4
+Systeme Valve Echappement Automatique
+Mustang EcoBoost 2016 Stage 4+ E85 (600+ ch)
+CHANGELOG v4.4
+Date: Decembre 2025
+AJOUT v4.4:
+- BLOC DIAG: LED verte POWER + bouton TEST facade
+- Diagnostic visuel en 5 secondes sans demontage
+- Bouton TEST simule pressostat = teste TOUTE la chaine
+CONSERVE v4.3:
+- Connecteur Breakout Box 2x headers 1x6 pins
+- 12 points de test pour validation automatisee
+CONSERVE v4.2:
+- Check valve supprimee, regulateur SMC IR1000-01BG
+AVERTISSEMENT SECURITE
+FAIL-SAFE: Actionneur fail-closed. Panne = valve ferme = backpressure turbo. Lever le pied immediatement.
+BLOC DIAG - Diagnostic visuel rapide [NOUVEAU v4.4]
+Objectif: Ouvrir coffre, voir en 5 secondes si systeme OK
+Composants facade:
+- LED verte 3mm (POWER)
+- Bouton poussoir 6mm NO (TEST)
+D1. LED POWER (verte):
+[+5V_LOG] -> R20 (1k 1/4W) -> LED verte anode
+LED verte cathode -> [GND_STAR]
+Fonction: Allumee = alimentation 5V OK
+D2. Bouton TEST:
+SW_TEST borne 1 -> [GND_STAR]
+SW_TEST borne 2 -> IN_A (74HC14 pin 1, apres R 1k serie)
+Fonction: Appuyer = simule pressostat ON = teste toute la chaine
+Cablage bouton TEST:
+                          ┌─── Pull-up 10k ─── [+5V_LOG]
+                          |
+Signal pressostat ─ R 1k ─┼─── IN_A (74HC14 pin1)
+                          |
+                          └─── SW_TEST ─── [GND]
+Note: Bouton en parallele avec sortie pressostat NPN
+Procedure diagnostic 5 secondes:
+Etape
+Action
+Resultat attendu
+Si echec
+1
+Regarder LED verte
+Allumee
+Fusible, relais, 78L05
+2
+Appuyer bouton TEST
+LED bouton Toyota ON
+74HC14, OR, BTS5090
+3
+Relacher TEST
+LED bouton Toyota OFF
+Blocage mecanique
+
+Tableau depannage:
+LED verte
+TEST
+Bouton
+Diagnostic
+OFF
+-
+-
+Pas d'alim: verifier fusible F1, relais, +12V_ACC
+ON
+Appuye
+OFF
+Chaine HS: 74HC14, diodes OR, BTS5090, fusible MAC
+ON
+Relache
+ON
+Bloque ON: CD4013 bloque, verifier reset power-on
+ON
+Relache
+OFF
+OK - Systeme fonctionnel
+
+BLOCS A0-R a G (resume)
+A0-R: Relais G5Q-1-HA-DC12-TY + 1N5819
+A: Ferrite + Fusible 1A + 1N5822 + TVS 5KP18CA + MOV S20K20 + MOV 14mm
+B: 78L05 (TO-92) + decouplages
+C: SMC ISE30A-01-N + 74HC14 buffer + Zener 5.1V + pull-up 10k
+D: Bouton Toyota 22x22mm LED + JST-XH 5P + 2x 820 Ohm 1/2W
+E: CD4013 bascule toggle + reset power-on
+F: OR diodes 1N4148 (AUTO + MANUAL -> CMD)
+G: BTS5090 driver + MAC 35A 12V + fusible 1A bobine
+Voir VALVE v4.2 pour details complets de chaque bloc.
+BLOC PNEUMATIQUE
+ZERO CHECK VALVE SUR LIGNE DETECTION
+Detection: Collecteur -> Durite 6mm libre -> SMC ISE30A
+Commande: Compresseur -> SMC IR1000-01BG (1 bar) -> MAC P -> Actionneur
+Reglages: P_ON 2.9-3.6 psi, P_OFF 2.0-2.9 psi, hysteresis >=0.7 psi
+BLOC J-BB - Connecteur Breakout Box
+Type: 2x headers males 1x6 pins (pas 2.54mm), espaces 3 rangees
+Montage stripboard: Couper 6 pistes entre les deux headers
+Rangee A (mesures):
+Pin 1: +12V_PROT | Pin 2: +5V_LOG | Pin 3: AUTO_REQ
+Pin 4: OUT_DRIVER | Pin 5: CMD | Pin 6: MANUAL_REQ
+Rangee B (commandes):
+Pin 7: GND | Pin 8: STIM_1 | Pin 9: STIM_2
+Pin 10: I_SENSE+ | Pin 11: I_SENSE- | Pin 12: GND
+BLOC I - Valeurs normalisees
+Resistances: Metal-film 1% 0.25W (sauf 820 Ohm 1/2W pour LEDs bouton)
+Condensateurs: 100nF X7R 50V decouplage, 10-47uF Low-ESR filtrage
+Diodes: 1N4148 (OR), 1N5822 (anti-polarite), 1N4733A (Zener 5.1V)
+LED diagnostic: Verte 3mm standard, Vf~2V, If=3mA avec R=1k
+ATTENTIONS CRITIQUES
+1. Polarite 1N5822: Bande cathode cote [+12V_PROT]
+2. MOV + TVS: <=10mm de l'entree, parallele
+3. Retour bobine MAC: vers [GND_STAR] uniquement
+4. Ligne vacuum: ZERO check valve
+5. Regulateur pression: SMC IR1000-01BG regle 1 bar
+6. Connecteur J-BB: Couper pistes ENTRE les 2 headers
+7. Bouton TEST: Connecter APRES R 1k serie (protege 74HC14)
+8. LED POWER: Cathode (patte courte) vers GND
+BOM ADDITIONNELLE v4.4
+Qty
+Composant
+Reference
+2
+Header male 1x6 pins 2.54mm
+PLS-06 (Breakout)
+1
+LED verte 3mm
+Standard diffusant
+1
+Bouton poussoir 6mm NO
+Tactile switch
+1
+Resistance 1k 1/4W
+R20 (LED)
+
+IMPLANTATION FACADE BOITIER
+Percer facade boitier:
+- 1x trou 3mm pour LED verte POWER
+- 1x trou 6mm pour bouton TEST
+- Positionner pres du connecteur bouton Toyota (zone visible)
+Schema facade:
+┌─────────────────────────────────────┐
+│                                     │
+│   [●] POWER     [TEST]              │
+│   vert          poussoir            │
+│                                     │
+│   [GX12]        [DT-2P]   [AIR]     │
+│   bouton        12V       pneum     │
+│                                     │
+└─────────────────────────────────────┘
+CHECKLIST AVANT MONTAGE
+[ ] Supprimer check valve ligne vacuum
+[ ] Commander regulateur SMC IR1000-01BG
+[ ] Installer regulateur (reglage 1 bar)
+[ ] Gaine aluminisee 50cm sur durite actionneur
+[ ] Souder 2x headers 1x6, couper pistes
+[ ] Cabler 12 fils vers points de test
+[ ] Percer facade: 3mm LED + 6mm bouton
+[ ] Souder LED verte + R 1k
+[ ] Cabler bouton TEST vers IN_A (apres R 1k)
+[ ] Test: LED verte allumee + TEST = bouton Toyota ON
+--- FIN DOCUMENT VALVE v4.4 ---
