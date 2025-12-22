@@ -6,7 +6,7 @@
 
 <br>
 
-[![Version](https://img.shields.io/badge/version-4.6-0366d6?style=for-the-badge&logo=v&logoColor=white)](https://github.com)
+[![Version](https://img.shields.io/badge/version-4.7-0366d6?style=for-the-badge&logo=v&logoColor=white)](https://github.com)
 [![Status](https://img.shields.io/badge/status-PRODUCTION_READY-28a745?style=for-the-badge&logo=checkmarx&logoColor=white)](https://github.com)
 [![ISO](https://img.shields.io/badge/ISO_7637--2-COMPLIANT-ff6b00?style=for-the-badge&logo=iso&logoColor=white)](https://github.com)
 
@@ -27,7 +27,7 @@
     | |  | | |_| \__ \ || (_| | | | | (_| |  
     \_|  |_/\__,_|___/\__\__,_|_| |_|\__, |  
                                       __/ |  
-     EXHAUST VALVE CONTROLLER v4.6   |___/   
+     EXHAUST VALVE CONTROLLER v4.7   |___/   
 ```
 
 <br>
@@ -48,6 +48,33 @@
 ---
 
 </div>
+
+## 🆕 What's New in v4.7
+
+<table>
+<tr>
+<td>🔧</td>
+<td><b>BTS5090 + DIP Adapter</b></td>
+<td>Smart high-side driver now mountable on stripboard via TSSOP-8→DIP-8 adapter</td>
+</tr>
+<tr>
+<td>💡</td>
+<td><b>Brighter Power LED</b></td>
+<td>R20 reduced to 470Ω — doubled visibility (6.4mA vs 3mA)</td>
+</tr>
+<tr>
+<td>📟</td>
+<td><b>Breakout Box V1.5</b></td>
+<td>Watchdog, NVS calibration, I2C timeout, THT-only protection clamps</td>
+</tr>
+<tr>
+<td>❄️</td>
+<td><b>Cold Crank Advisory</b></td>
+<td>MCP1702 upgrade path documented for extreme cold starts</td>
+</tr>
+</table>
+
+---
 
 ## 📊 Quick Stats
 
@@ -99,7 +126,7 @@ Full ISO 7637-2 transient protection including load dump (+100V) and cold crank 
 5-second visual check: LED + TEST button validates entire signal chain
 
 ### 🔧 DIY Friendly
-100% through-hole components on standard stripboard — no SMD soldering required
+100% through-hole build on stripboard — SMD driver uses plug-in DIP adapter
 
 </td>
 </tr>
@@ -111,7 +138,7 @@ Full ISO 7637-2 transient protection including load dump (+100V) and cold crank 
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                          VALVE CONTROLLER v4.6                              │
+│                          VALVE CONTROLLER v4.7                              │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐  │
@@ -128,7 +155,7 @@ Full ISO 7637-2 transient protection including load dump (+100V) and cold crank 
 │                                   ▼                    ▼                    │
 │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐  │
 │   │ BOOST   │───▶│ SMC     │───▶│ 74HC14  │───▶│   OR    │───▶│ BTS5090 │  │
-│   │ INTAKE  │    │ ISE30A  │    │ BUFFER  │    │  GATE   │    │ DRIVER  │  │
+│   │ INTAKE  │    │ ISE30A  │    │ BUFFER  │    │  GATE   │    │ +ADAPTER│  │
 │   └─────────┘    └─────────┘    └─────────┘    └────┬────┘    └────┬────┘  │
 │                                                     │              │       │
 │   ┌─────────┐    ┌─────────┐                       │              ▼       │
@@ -147,7 +174,7 @@ Full ISO 7637-2 transient protection including load dump (+100V) and cold crank 
 
 ## 🔌 Hardware
 
-### Protection Chain (BLOC A) — *v4.6 Certified*
+### Protection Chain (BLOC A) — *v4.7 Certified*
 
 | Stage | Component | Function | Specs | Package |
 |:-----:|-----------|----------|-------|:-------:|
@@ -167,7 +194,15 @@ Full ISO 7637-2 transient protection including load dump (+100V) and cold crank 
 | **C** | 74HC14 | DIP-14 | Schmitt Buffer |
 | **D** | Toyota 22×22mm | — | Illuminated Push Button |
 | **E** | CD4013 | DIP-14 | Toggle Flip-Flop |
-| **G** | BTS5090-1EJA | PG-TDSO-8 | High-Side Smart Driver |
+| **G** | BTS5090-1EJA | TSSOP-8 **+ DIP Adapter** | High-Side Smart Driver |
+
+### 🆕 DIP Adapter (v4.7)
+
+| SMD Component | Adapter | Source |
+|---------------|---------|--------|
+| BTS5090-1EJA (TSSOP-8) | TSSOP-8 → DIP-8 | Aries 08-350000-11 |
+
+> 💡 **Why keep the BTS5090?** Integrated OC/OT/ESD protection + diagnostic pin — no THT equivalent exists with same features
 
 ### Pneumatic System
 
@@ -211,9 +246,20 @@ SMC ISE30A    ████████████░░░░░░░░  28V 
 
 ---
 
-## 📟 Breakout Box Interface (V1.4)
+## 📟 Breakout Box V1.5
 
-*Diagnostic interface for automated validation testing*
+*ESP32-C6-LCD diagnostic interface with persistent calibration*
+
+### 🆕 V1.5 Features
+
+| Feature | Description |
+|---------|-------------|
+| 🐕 **Watchdog** | 5s hardware watchdog with auto-reset |
+| 💾 **NVS Calibration** | ADC calibration persists across reboots |
+| ⏱️ **I2C Timeout** | 100ms timeout prevents INA219 freeze |
+| 🔌 **THT Clamps** | 2× 1N5817 replace SMD BAT54S |
+
+### Connector Pinout
 
 <table>
 <tr>
@@ -238,8 +284,8 @@ SMC ISE30A    ████████████░░░░░░░░  28V 
 | Pin | Signal | Description |
 |:---:|--------|-------------|
 | 7 | `GND` | Ground reference |
-| 8 | `STIM_1` | After 1k resistor |
-| 9 | `STIM_2` | Before 10k resistor |
+| 8 | `STIM_1` | Force AUTO high |
+| 9 | `STIM_2` | Toggle MANUAL |
 | 10 | `I_SENSE+` | Current sense + |
 | 11 | `I_SENSE-` | Current sense - |
 | 12 | `GND` | Ground reference |
@@ -247,6 +293,15 @@ SMC ISE30A    ████████████░░░░░░░░  28V 
 </td>
 </tr>
 </table>
+
+### Serial Commands
+
+```
+L - Live mode (default)     a/A - STIM1 on/off
+S - Stress test (20×10Hz)   M   - STIM2 pulse (toggle)
+C - Calibration mode        R   - Reset min/max
+I - System info             H   - Help
+```
 
 ---
 
@@ -283,7 +338,8 @@ SMC ISE30A    ████████████░░░░░░░░  28V 
 
 | Version | Date | Changes |
 |:-------:|:----:|---------|
-| **v4.6** | Dec 2025 | 🔴 **CRITICAL**: TVS SM5S22A→P6KE18CA, orientation fix, removed conflicting protections |
+| **v4.7** | Dec 2025 | 🔧 BTS5090 DIP adapter, LED 470Ω brighter, cold crank advisory, Breakout V1.5 |
+| v4.6 | Dec 2025 | 🔴 TVS SM5S22A→P6KE18CA, orientation fix, removed conflicting protections |
 | v4.5 | Dec 2025 | Added SM5S22A TVS for ISO 7637-2 Pulse 1 |
 | v4.4 | Dec 2025 | Added diagnostic LED + TEST button |
 | v4.3 | Dec 2025 | Added Breakout Box connector J-BB |
@@ -295,10 +351,11 @@ SMC ISE30A    ████████████░░░░░░░░  28V 
 
 | File | Description |
 |------|-------------|
-| [`VALVE_v4_6.docx`](./VALVE_v4_6.docx) | 📄 Complete circuit documentation |
-| [`BOM_VALVE_v4_6.md`](./BOM_VALVE_v4_6.md) | 📋 Bill of Materials |
-| [`BreakoutBox_V1_4.md`](./BreakoutBox_Circuit_V1_4.md) | 🔌 Diagnostic tool schematic |
-| [`PROTOCOLE_PREMORTEM_V4_2_1.txt`](./PROTOCOLE_PREMORTEM_V4_2_1.txt) | ✅ Design validation protocol |
+| [`VALVE_v4_7.md`](./VALVE_v4_7.md) | 📄 Complete circuit documentation |
+| [`BOM_VALVE_v4_7.md`](./BOM_VALVE_v4_7.md) | 📋 Bill of Materials |
+| [`BreakoutBox_Circuit_V1_5.md`](./BreakoutBox_Circuit_V1_5.md) | 🔌 Diagnostic tool schematic |
+| [`BreakoutBox_V1_5.ino`](./BreakoutBox_V1_5.ino) | 💻 ESP32-C6 firmware |
+| [`PROTOCOLE_PREMORTEM_V4_2_2.txt`](./PROTOCOLE_PREMORTEM_V4_2_2.txt) | ✅ Design validation protocol |
 
 ---
 
