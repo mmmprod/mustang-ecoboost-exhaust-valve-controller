@@ -1,0 +1,254 @@
+Circuit VALVE v4.5
+Systeme Valve Echappement Automatique
+Mustang EcoBoost 2016 Stage 4+ E85 (600+ ch)
+ISO 7637-2 Pulse 1 Compliant
+CHANGELOG v4.5
+Date: Decembre 2025
+CORRECTION CRITIQUE v4.5:
+- TVS SM5S22A AJOUTEE en entree (avant ferrite)
+- Protection ISO 7637-2 Pulse 1 (-150V) = 1N5822 protegee
+- Clamping 36V << 40V (V_RRM 1N5822)
+CONSERVE v4.4:
+- LED verte POWER + bouton TEST facade
+- Diagnostic visuel 5 secondes
+CONSERVE v4.3:
+- Connecteur Breakout Box 2x headers 1x6
+- 12 points de test validation automatisee
+CONSERVE v4.2:
+- Check valve supprimee, regulateur SMC IR1000-01BG
+AVERTISSEMENT SECURITE
+FAIL-SAFE: Actionneur fail-closed. Panne = valve ferme = backpressure turbo. Lever le pied immediatement.
+BLOC A0-R - Relais micro-ISO PCB 12V
+Composant: Omron G5Q-1-HA-DC12-TY, SPDT 12V
+Brochage dessous: 1-Coil, 2-Coil, 3-COM, 4-NC, 5-NO
+Donnees coil: 12V typ. 360 Ohm (~33mA)
+Cablage:
+BATTERIE -> fusible lame 5A externe (<=15cm borne) -> [+12V_BATT] -> pin 3 COM
+Pin 5 NO -> [+12V_IN]
+Pin 1 Coil <- [+12V_ACC]
+Pin 2 Coil -> [GND_STAR]
+1N5819 cathode cote pin 1, anode -> [GND_STAR]
+BLOC A - Alimentation protegee 12V [MODIFIE v4.5]
+NOUVEAU v4.5: TVS SM5S22A en tete de ligne pour protection Pulse 1 ISO 7637-2
+Chaine d'entree COMPLETE:
+[+12V_IN] -> TVS SM5S22A -> Ferrite 220 Ohm@100MHz -> Fusible 1A T -> 1N5822 -> [+12V_PROT]
+A1. TVS Entree SM5S22A [NOUVEAU v4.5]:
+SM5S22A anode -> [+12V_IN]
+SM5S22A cathode -> [GND_STAR]
+Position: AVANT ferrite, au plus pres de l'entree
+Specs SM5S22A:
+- V_RWM (standoff): 22V
+- V_BR (breakdown): 24.4V min
+- V_C (clamp): 36V @ 17A
+- P_PPM: 3000W (10/1000us)
+- Package: DO-214AA (SMB)
+Protection Pulse 1: -150V clampe a -36V -> 1N5822 voit 36V < 40V V_RRM -> SURVIT
+A2. Ferrite EMI:
+BLM31PG221SN1L (220 Ohm @ 100MHz), package 1206
+A3. Fusible:
+1A Temporise (T), verre 5x20mm
+A4. Diode anti-polarite:
+1N5822 Schottky 40V 3A, anode -> cathode, bande cote [+12V_PROT]
+A5. Ecretage transitoires (apres 1N5822):
+- TVS 5KP18CA (DO-201 axial) entre [+12V_PROT] et [GND_STAR], <=10mm
+- MOV SIOV S20K20 (B72220S0200K101) entre [+12V_PROT] et [GND_STAR]
+- MOV 14mm ~26VDC (B72214S0200K101) pres du 78L05
+A6. Decouplage 12V:
+[+12V_PROT] -> 100nF X7R 50V || 22uF Low-ESR 50V -> [GND_STAR]
+BLOC B - Regulateur 5V
+Composant: 78L05 (TO-92), ref LM78L05-TT
+Broches: 1=Vout, 2=GND, 3=Vin
+[+12V_PROT] -> 78L05 Vin (pin 3)
+78L05 GND (pin 2) -> [GND_STAR]
+78L05 Vout (pin 1) -> [+5V_LOG]
+Decouplages:
+VIN: 100nF X7R 50V || 10uF Low-ESR 50V
+VOUT: 100nF X7R 25V + 10uF + 47uF Low-ESR 25V
+BLOC C - Pressostat SMC ISE30A-01-N
+Type: NPN open-collector, alimentation 12-24V
+Cablage fils:
+Brun -> [+12V_PROT]
+Bleu -> [GND_STAR]
+Noir (OUT) -> 1k serie -> IN_A (74HC14 pin 1)
+Interface logique:
+Pull-up 10k de IN_A -> [+5V_LOG]
+Zener 5.1V/1W (1N4733A) de IN_A -> [GND_STAR]
+100nF X7R de IN_A -> [GND_STAR]
+74HC14 buffer:
+IN_A -> 74HC14 pin 1 (IN)
+74HC14 pin 2 (OUT) -> [AUTO_REQ]
+VCC (pin 14) -> [+5V_LOG], GND (pin 7) -> [GND_STAR]
+100nF entre VCC et GND
+Reglages pressostat:
+P_ON: 2.9-3.6 psi (0.20-0.25 bar)
+P_OFF: 2.0-2.9 psi (0.14-0.20 bar)
+Hysteresis: >=0.7 psi
+BLOC D - Bouton Toyota 22x22mm LED
+Connecteur: JST-XH 5P (pas 2.5mm)
+Brochage header:
+Pin1=[LED_12V], Pin2=GND_LED, Pin3=[BTN_RET], Pin4=[BTN_SIG], Pin5=NC
+Cablage bouton:
+Vert -> [LED_12V]
+Noir+Blanc -> GND_LED
+Rouge+Jaune torsades -> [BTN_SIG]
+[BTN_RET] -> GND
+Resistances LED (2x separees):
+LED blanche: 820 Ohm 1/2W metal film - I=13.7mA, P=153mW (31%)
+LED verte: 820 Ohm 1/2W metal film - I=14.5mA, P=172mW (34%)
+BLOC E - Bascule CD4013 (toggle)
+Alimentation: VDD=[+5V_LOG] (pin 14), VSS=[GND_STAR] (pin 7)
+Cablage flip-flop:
+D (pin 5) -> Q_barre (pin 2)
+R (pin 4) -> 100k -> [GND_STAR]
+S (pin 6) -> 100k -> [GND_STAR]
+[BTN_SIG] -> 10k serie -> CLK (pin 3)
+Pull-up 10k de CLK -> [+5V_LOG]
+CLK -> 1uF X7R 16V -> [GND_STAR] (anti-rebond)
+Q (pin 1) = [MANUAL_REQ]
+Reset power-on:
+100nF entre [+5V_LOG] et R (pin 4)
+100k de R (pin 4) -> [GND_STAR]
+BLOC F - OR Auto/Manuel -> [CMD]
+[AUTO_REQ] -> 1N4148 -> [CMD]
+[MANUAL_REQ] -> 1N4148 -> [CMD]
+Pull-down 10k de [CMD] -> [GND_STAR]
+[CMD] -> 4.7k -> IN driver BTS5090
+BLOC G - Driver BTS5090 -> MAC 35A
+G1. Driver Infineon BTS50901EJAXUMA1
+Brochage: 1=GND, 2=IN, 3=DEN, 4=IS, 5=NC, 6-7-8=OUT, pad=VS
+Pad VS -> [+12V_PROT]
+Decouplage VS: 100nF X7R 50V || 22uF Low-ESR 50V -> [GND_STAR]
+IN (pin 2) <- [CMD] via 4.7k
+DEN (pin 3) -> 47k -> [GND_STAR]
+GND (pin 1) -> [GND_STAR]
+OUT (6-7-8 pontes) -> [OUT_DRIVER]
+G2. Protection bobine:
+[OUT_DRIVER] -> fusible mini-blade 1A -> fil + bobine MAC
+Fil - bobine MAC -> [GND_STAR] uniquement
+G3. Electrovanne MAC 35A:
+Puissance: 5.4W, Ports 1/8 NPT: 1=P, 2=A, 3=E
+Repos: A->E (purge). Energise: P->A (alimente actionneur)
+BLOC DIAG - Diagnostic visuel rapide
+D1. LED POWER (verte):
+[+5V_LOG] -> R20 (1k 1/4W) -> LED verte anode
+LED verte cathode -> [GND_STAR]
+D2. Bouton TEST:
+SW_TEST borne 1 -> [GND_STAR]
+SW_TEST borne 2 -> IN_A (74HC14 pin 1, APRES R 1k serie)
+Procedure 5 secondes:
+1. LED verte allumee? Si NON: fusible/relais/78L05
+2. Appuyer TEST -> bouton Toyota ON? Si NON: 74HC14/OR/BTS5090
+3. Relacher -> bouton Toyota OFF? OK complet
+BLOC J-BB - Connecteur Breakout Box
+Type: 2x headers males 1x6 pins (pas 2.54mm), espaces 3 rangees
+Montage stripboard: Couper 6 pistes entre les deux headers
+Rangee A (mesures):
+1: +12V_PROT | 2: +5V_LOG | 3: AUTO_REQ | 4: OUT_DRIVER | 5: CMD | 6: MANUAL_REQ
+Rangee B (commandes):
+7: GND | 8: STIM_1 (apres R1k) | 9: STIM_2 (avant R10k) | 10: I_SENSE+ | 11: I_SENSE- | 12: GND
+BLOC PNEUMATIQUE
+ZERO CHECK VALVE SUR LIGNE DETECTION
+Ligne Detection:
+Collecteur admission -> Durite 6mm libre -> Passe-cloison -> SMC ISE30A
+Ligne Commande:
+Compresseur (90-120 PSI) -> Te -> SMC IR1000-01BG (1 bar) -> MAC P -> Actionneur
+Protection thermique: Gaine aluminisee 50cm sur section actionneur
+BOM COMPLETE v4.5
+Qty
+Composant
+Valeur/Ref
+Package
+1
+TVS Automotive [NEW v4.5]
+SM5S22A 22V 3kW
+DO-214AA
+1
+Relais SPDT
+Omron G5Q-1-HA-DC12
+PCB
+1
+Regulateur 5V
+78L05 / LM78L05
+TO-92
+1
+Buffer Schmitt
+74HC14
+DIP-14
+1
+Flip-flop D
+CD4013
+DIP-14
+1
+High-side driver
+BTS5090-1EJA
+PG-TDSO-8
+1
+Diode Schottky
+1N5822 40V 3A
+DO-201AD
+1
+TVS bidir
+5KP18CA 18V 5kW
+DO-201AE
+2
+MOV
+S20K20 + 14mm 26V
+Radial
+1
+Zener
+1N4733A 5.1V 1W
+DO-41
+2
+Diode signal
+1N4148
+DO-35
+1
+LED verte 3mm
+Standard
+3mm
+1
+Bouton 6mm NO
+Tactile switch
+6x6mm
+1
+Ferrite
+220 Ohm @ 100MHz
+1206
+2
+Fusible
+1A T + 1A mini-blade
+5x20 + ATO
+1
+Pressostat
+SMC ISE30A-01-N
+-
+1
+Electrovanne
+MAC 35A 12V
+1/8 NPT
+1
+Regulateur pression
+SMC IR1000-01BG
+Rc 1/8
+
+ATTENTIONS CRITIQUES
+1. SM5S22A: Anode cote [+12V_IN], cathode cote [GND_STAR] - AVANT ferrite
+2. Polarite 1N5822: Bande cathode cote [+12V_PROT]
+3. MOV + TVS 5KP18CA: <=10mm de l'entree, parallele sur [+12V_PROT]
+4. Retour bobine MAC: vers [GND_STAR] uniquement
+5. Ligne vacuum: ZERO check valve
+6. Regulateur pression: SMC IR1000-01BG regle 1 bar OBLIGATOIRE
+7. Connecteur J-BB: Couper pistes ENTRE les 2 headers
+8. Bouton TEST: Connecter APRES R 1k serie (protege 74HC14)
+9. LED POWER: Cathode (patte courte) vers GND
+CHECKLIST AVANT MONTAGE
+[ ] Commander TVS SM5S22A (DO-214AA)
+[ ] Souder SM5S22A en tete de ligne (avant ferrite)
+[ ] Supprimer check valve ligne vacuum
+[ ] Installer regulateur SMC IR1000-01BG (1 bar)
+[ ] Gaine aluminisee 50cm sur durite actionneur
+[ ] Souder 2x headers 1x6 (J-BB), couper pistes
+[ ] Percer facade: 3mm LED + 6mm bouton TEST
+[ ] Souder LED verte + R 1k + bouton TEST
+[ ] Test: LED verte + TEST = bouton Toyota ON
+--- FIN DOCUMENT VALVE v4.5 ---
