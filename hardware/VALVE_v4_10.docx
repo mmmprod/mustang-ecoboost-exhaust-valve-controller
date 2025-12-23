@@ -422,17 +422,57 @@ SW_TEST borne 2 -> IN_A (74HC14 pin 1, APRES R 1k serie)
 
 ## BLOC J-BB - Connecteur Breakout Box
 
-**Type:** 2x headers males 1x6 pins (pas 2.54mm), espaces 3 rangees
+**Type:** Embase JST XH 2x6 male (pas 2.5mm)
 
-**Montage stripboard:** Couper 6 pistes entre les deux headers
+**Composant:** JST B12B-XH-A (embase 12 pins 2 rangees)
 
-**Rangee A (mesures):**
+```
+JST XH 2x6 Male (vue dessus, cote soudure)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ A1  A2  A3  A4  A5  A6 â”‚
+â”‚ B1  B2  B3  B4  B5  B6 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+```
 
-1: +12V_PROT | 2: +5V_LOG | 3: AUTO_REQ | 4: OUT_DRIVER | 5: CMD | 6: MANUAL_REQ
+### Pinout JST et connexions VALVE
 
-**Rangee B (commandes):**
+| JST | Signal | Connexion circuit VALVE |
+|-----|--------|-------------------------|
+| A1 | +12V_PROT | Apres D1 (1N5822) |
+| A2 | +5V_LOG | Sortie U1 (NCV2931) pin 1 |
+| A3 | AUTO_REQ | Point [AUTO_REQ] apres tempo |
+| A4 | OUT_DRIVER | Sortie BTS5090 vers electrovalve |
+| A5 | CMD | Point [VALVE_CMD] entree BTS5090 |
+| A6 | MANUAL_REQ | Sortie CD4013 Q (pin 1) |
+| B1 | GND | Masse [GND_STAR] |
+| B2 | STIM_PRESS | Point IN_A (74HC14 pin 1, apres R 1k) |
+| B3 | STIM_TOGGLE | Entree CD4013 CLK (pin 3) |
+| B4 | I_SENSE+ | +12V_PROT (avant electrovalve) |
+| B5 | I_SENSE- | +12V vers electrovalve (point coupure) |
+| B6 | GND | Masse [GND_STAR] |
 
-7: GND | 8: STIM_1 (apres R1k) | 9: STIM_2 (avant R10k) | 10: I_SENSE+ | 11: I_SENSE- | 12: GND
+### Correspondance DB-15 BreakoutBox
+
+**Cable:** DB-15 male fils nus vers JST XH femelle 2x6
+
+| DB-15 Pin | Couleur fil | Signal Box | JST Pin | Signal VALVE |
+|-----------|-------------|------------|---------|--------------|
+| 1 | **Noir** | +12V | A1 | +12V_PROT |
+| 2 | **Marron** | +5V | A2 | +5V_LOG |
+| 3 | **Rouge** | GND | B1 | GND |
+| 4 | **Orange** | AIN1 | A4 | OUT_DRIVER |
+| 7 | **Bleu** | DIN1 | A3 | AUTO_REQ |
+| 8 | **Violet** | DIN2 | A5 | CMD |
+| 9 | **Gris** | DIN3 | A6 | MANUAL_REQ |
+| 10 | **Blanc** | DOUT1 | B2 | STIM_PRESS |
+| 11 | **Noir/Blanc** | DOUT2 | B3 | STIM_TOGGLE |
+| 12 | **Marron/Blanc** | I+ | B4 | I_SENSE+ |
+| 13 | **Rose** | I- | B5 | I_SENSE- |
+| 14 | **Vert clair** | GND | B6 | GND |
+
+**Non utilises:** Jaune (5), Vert (6), Bleu clair (15)
+
+**Note I_SENSE:** Le shunt INA219 s'insere en serie entre B4 et B5 pour mesurer courant electrovalve.
 
 ---
 
@@ -565,7 +605,7 @@ SMC IR1000 (1 bar) -> Te laiton -> MAC port P
 | 1 | F2 | Fusible | 1A ATO mini-blade | ATO |
 | 1 | SW1 | Bouton TEST | Tactile NO | 6x6mm THT |
 | 1 | LED1 | LED verte | Standard 3mm | 3mm THT |
-| 2 | J1-J2 | Header male | 1x6 pins pas 2.54mm | THT |
+| 1 | J-BB | Embase JST XH | B12B-XH-A 2x6 | Pas 2.5mm |
 
 ### Pneumatique / Externe
 
