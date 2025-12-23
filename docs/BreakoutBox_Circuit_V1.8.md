@@ -54,18 +54,18 @@
 
 ### A1. USB-C Panel Mount
 
-**Composant:** Cable USB-C panel mount 15cm
+**Composant:** Cable USB-C panel mount avec ecrou
 
-| Fournisseur | Reference | Prix |
-|-------------|-----------|------|
-| SparkFun | CAB-15455 | ~$15 |
-| Amazon | AAOTOKK USB-C panel | ~$10 |
-| AliExpress | USB-C chassis mount | ~$5 |
+**Specs:**
+- USB 3.1 Type-C
+- Percage facade: O23.5mm
+- Fixation: ecrou filete (fourni)
+- Longueur cable: 305/610/915mm selon modele
 
 **Cablage:**
 
 ```
-[Facade USB-C femelle] <--cable 15cm--> [ESP32 USB-C]
+[Facade USB-C femelle] <--cable--> [ESP32 USB-C]
        ^
    Chargeur 5V / PC / Powerbank
 ```
@@ -240,7 +240,7 @@ VIN- -> DB-15 pin13 (I-)
 | Qty | Composant | Reference |
 |-----|-----------|-----------|
 | 1 | DB-15 breakout board femelle | PremierCable DB15-G2-01 |
-| 1 | USB-C panel mount 15cm | SparkFun CAB-15455 ou equiv |
+| 1 | USB-C panel mount ecrou | Percage O23.5mm, fixation ecrou |
 
 ### Semiconducteurs
 
@@ -394,10 +394,10 @@ JST XH 2x6 Male (vue dessus)
 
 ### Facade
 
-- [ ] Decoupe ecran
+- [ ] Decoupe ecran (selon ESP32-C6 Touch LCD)
 - [ ] Percage DB-15 (ouverture standard D-sub)
-- [ ] Percage USB-C + vis M3
-- [ ] Percage bouton BOOT
+- [ ] Percage USB-C O23.5mm + fixation ecrou
+- [ ] Percage bouton BOOT (O6mm typ)
 
 ### Interne
 
