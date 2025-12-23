@@ -4,7 +4,8 @@
 
 &nbsp;
 
-[![Version](https://img.shields.io/badge/version-4.9-0366d6?style=for-the-badge&logo=v&logoColor=white)](https://github.com)
+[![Version](https://img.shields.io/badge/VALVE-v4.9-0366d6?style=for-the-badge&logo=v&logoColor=white)](https://github.com)
+[![Breakout](https://img.shields.io/badge/BREAKOUT-v1.10-9c27b0?style=for-the-badge&logo=espressif&logoColor=white)](https://github.com)
 [![Status](https://img.shields.io/badge/status-PRODUCTION_READY-28a745?style=for-the-badge&logo=checkmarx&logoColor=white)](https://github.com)
 [![ISO](https://img.shields.io/badge/ISO_7637--2-COMPLIANT-ff6b00?style=for-the-badge&logo=iso&logoColor=white)](https://github.com)
 
@@ -32,15 +33,14 @@
 
 **Automatic boost-activated exhaust bypass system**
 
-*Fail-Safe • Automotive-Grade • Plug & Play*
+*Fail-Safe • Automotive-Grade • Touch Interface*
 
 &nbsp;
 
 [📖 Documentation](#-documentation) •
 [🔧 Installation](#-installation) •
-[⚡ Quick Start](#-quick-start) •
-[🛡️ Safety](#%EF%B8%8F-safety) •
-[📟 Breakout Box](#-breakout-box-diagnostic-tool)
+[📟 Breakout Box](#-breakout-box-v110) •
+[🛡️ Safety](#%EF%B8%8F-safety)
 
 &nbsp;
 
@@ -50,7 +50,29 @@
 
 |  |  |  |  |
 | --- | --- | --- | --- |
-| ![Boost](https://img.shields.io/badge/2.9--3.6-PSI-dc3545?style=for-the-badge) <br/> **Boost Threshold** | ![Load Dump](https://img.shields.io/badge/100V-400ms-ffc107?style=for-the-badge) <br/> **Load Dump Protection** | ![Clamp](https://img.shields.io/badge/25.2V-Clamp-28a745?style=for-the-badge) <br/> **TVS Clamping** | ![Temp](https://img.shields.io/badge/--40°C_to_+85°C-Operating-17a2b8?style=for-the-badge) <br/> **Temperature Range** |
+| ![Boost](https://img.shields.io/badge/2.9--3.6-PSI-dc3545?style=for-the-badge) | ![Load Dump](https://img.shields.io/badge/100V-400ms-ffc107?style=for-the-badge) | ![Clamp](https://img.shields.io/badge/24.4V-Clamp-28a745?style=for-the-badge) | ![Temp](https://img.shields.io/badge/--40°C_to_+85°C-Operating-17a2b8?style=for-the-badge) |
+| **Boost Threshold** | **Load Dump Protection** | **TVS Clamping** | **Temperature Range** |
+
+---
+
+## 🆕 What's New
+
+### VALVE v4.9 — *Load Dump Survivor*
+
+| Change | Before | After | Impact |
+|--------|--------|-------|--------|
+| 🔴 **5V Regulator** | 78L05 (30V max) | **NCV2931AZ** (60V trans) | Survives TVS clamp |
+| ⚡ **Cold Crank** | 2V dropout | **330mV dropout** | Works at 5.3V input |
+| 🛡️ **Transient** | Destruction at 25V | **60V certified** | ISO 7637-2 compliant |
+
+### BreakoutBox v1.10 — *Touch & Go*
+
+| Feature | Description |
+|---------|-------------|
+| 👆 **Capacitive Touch** | ESP32-C6 + 1.9" IPS touchscreen |
+| 🔒 **Race Condition Fix** | Atomic interrupt handling |
+| 🩺 **Sensor Diagnosis** | Detects "sensor fault" vs "valve stuck" |
+| ⏱️ **1s Debounce** | No more accidental double-tap |
 
 ---
 
@@ -58,7 +80,9 @@
 
 |  |  |
 | --- | --- |
-| 🚗 **Automatic Mode** <br/> Opens valve when SMC ISE30A pressure switch detects boost above configurable threshold <br/><br/> 🕹️ **Manual Override** <br/> Toggle valve state anytime with OEM-style illuminated Toyota push button <br/><br/> 🛡️ **Fail-Safe Design** <br/> Pneumatic actuator is fail-closed — valve closes on power loss, protecting your turbo | ⚡ **Automotive-Grade** <br/> Full ISO 7637-2 transient protection including load dump (+100V) and cold crank (6V) <br/><br/> 🔍 **Quick Diagnostic** <br/> 5-second visual check: LED + TEST button validates entire signal chain <br/><br/> 🔧 **DIY Friendly** <br/> 100% through-hole components on standard stripboard — no SMD soldering required |
+| 🚗 **Automatic Mode**<br>Opens valve when SMC ISE30A detects boost above threshold | ⚡ **Automotive-Grade**<br>Full ISO 7637-2 protection: load dump, cold crank, EMI |
+| 🕹️ **Manual Override**<br>Toggle valve anytime with illuminated Toyota button | 📱 **Touch Diagnostics**<br>One-tap test validates entire signal chain |
+| 🛡️ **Fail-Safe Design**<br>Pneumatic actuator closes on power loss | 🔧 **DIY Friendly**<br>100% through-hole on standard stripboard |
 
 ---
 
@@ -70,17 +94,17 @@
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐  │
-│   │ +12V    │───▶│1.5KE18CA│───▶│ FERRITE │───▶│ FUSE 1A │───▶│ 1N5822  │  │
+│   │ +12V    │───▶│ P6KE18CA│───▶│ FERRITE │───▶│ FUSE 1A │───▶│ 1N5822  │  │
 │   │ BATTERY │    │ TVS 18V │    │ 90Ω EMI │    │ PROTECT │    │ REVERSE │  │
 │   └─────────┘    └─────────┘    └─────────┘    └─────────┘    └────┬────┘  │
 │                                                                     │       │
 │        ┌────────────────────────────────────────────────────────────┘       │
 │        ▼                                                                    │
-│   ┌─────────┐         ┌─────────────────────────────────────────────────┐  │
-│   │NCV2931  │────────▶│                  +5V LOGIC                      │  │
-│   │ 5V REG  │         └─────────────────────────────────────────────────┘  │
-│   └─────────┘                     │                    │                    │
-│   (60V transient)                 ▼                    ▼                    │
+│   ┌──────────┐        ┌─────────────────────────────────────────────────┐  │
+│   │ NCV2931  │───────▶│                  +5V LOGIC                      │  │
+│   │ 60V SAFE │        └─────────────────────────────────────────────────┘  │
+│   └──────────┘                    │                    │                    │
+│                                   ▼                    ▼                    │
 │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐  │
 │   │ BOOST   │───▶│ SMC     │───▶│ 74HC14  │───▶│   OR    │───▶│ BTS5090 │  │
 │   │ INTAKE  │    │ ISE30A  │    │ BUFFER  │    │  GATE   │    │ DRIVER  │  │
@@ -92,7 +116,7 @@
 │   └─────────┘    └─────────┘                                 │ SOLENOID│  │
 │                                                              └────┬────┘  │
 │   ┌─────────────────────────────────────────────────────────────┐ │       │
-│   │ 🟢 LED POWER        🔘 TEST BUTTON        📟 J-BB BREAKOUT  │ │       │
+│   │ 🟢 LED        🔘 TEST        📟 BREAKOUT BOX        👆 TOUCH │ │       │
 │   └─────────────────────────────────────────────────────────────┘ ▼       │
 │                                                              ACTUATOR      │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -100,163 +124,134 @@
 
 ---
 
-## 🔌 Hardware
+## 📟 Breakout Box V1.10
 
-### Protection Chain (BLOC A) — *v4.9 Certified*
+*Touch-enabled diagnostic interface — tap to test*
 
-| Stage | Component | Function | Specs | Package |
-| --- | --- | --- | --- | --- |
-| **1** | `1.5KE18CA` | TVS Clamping | V_C = 25.2V @ 60A, 1500W | DO-201AE |
-| **2** | `Würth 742792093` | EMI Filter | 90Ω @ 100MHz | Axial |
-| **3** | `Fuse 1A T` | Overcurrent | Fast-blow | 5×20mm |
-| **4** | `1N5822` | Reverse Polarity | 40V 3A Schottky | DO-201AD |
-| **5** | `NCV2931AZ-5.0G` | 5V LDO | 60V transient | TO-92 |
+<table>
+<tr>
+<td width="50%">
 
-> ⚠️ **v4.9 CRITICAL**: NCV2931 replaces 78L05 — supports 60V transients vs TVS clamp 25.2V
+### 🖥️ Hardware
 
-### Logic & Control
+| Spec | Value |
+|------|-------|
+| **MCU** | ESP32-C6FH8 |
+| **Clock** | 160 MHz |
+| **Display** | 1.9" IPS 170×320 |
+| **Touch** | CST816 Capacitive |
+| **Current** | INA219 ±3.2A |
+| **Interface** | WiFi 6 / BLE 5 |
 
-| Block | Component | Package | Function |
-| --- | --- | --- | --- |
-| **B** | NCV2931AZ-5.0G | TO-92 | 5V Regulation (60V transient) |
-| **C** | SMC ISE30A-01-N | — | Boost Pressure Sensing |
-| **C** | 74HC14 | DIP-14 | Schmitt Buffer |
-| **D** | Toyota 22×22mm | — | Illuminated Push Button |
-| **E** | CD4013 | DIP-14 | Toggle Flip-Flop |
-| **G** | BTS5090-1EJA + Adapter | TSSOP-8→DIP | High-Side Smart Driver |
+</td>
+<td width="50%">
 
-### Pneumatic System
+### ⚡ Features
 
-| Component | Reference | Function |
-| --- | --- | --- |
-| Pressure Switch | SMC ISE30A-01-N | Boost detection (NPN, 12-24V) |
-| Pressure Regulator | SMC IR1000-01BG | Compressor → 1 bar output |
-| Solenoid Valve | MAC 35A 12V | Pneumatic control (5.4W) |
-| Actuator | Fail-closed | Exhaust valve actuation |
+| Feature | Status |
+|---------|--------|
+| 👆 Touch to Test | ✅ |
+| 📊 Live Readings | ✅ |
+| 🔴🟢 GO/NO-GO | ✅ |
+| 🩺 Fault Diagnosis | ✅ |
+| 📋 One-liner Report | ✅ |
+| 🔒 Race Condition Fix | ✅ |
 
-> ⚠️ **NO CHECK VALVE** on detection line — Direct vacuum path required
+</td>
+</tr>
+</table>
+
+### GPIO Map (Waveshare ESP32-C6 Touch LCD 1.9")
+
+```
+LCD RESERVED:     GPIO 4, 5, 6, 7, 14, 15  ← DO NOT USE
+Touch I2C:        GPIO 8 (SCL), 18 (SDA)   ← Shared with INA219
+Touch Control:    GPIO 22 (INT)
+ADC Available:    GPIO 0, 1, 2, 3
+Digital Free:     GPIO 19, 20, 21, 23      ← Used for BreakoutBox I/O
+```
+
+> ⚠️ **SD Card slot disabled** — GPIO 19,20 reused for stimulation outputs
 
 ---
 
-## 📟 Breakout Box Diagnostic Tool
+## 🔌 Hardware
 
-### *Touch Screen Interface for Technicians*
+### Protection Chain (BLOC A)
 
-&nbsp;
+| Stage | Component | Function | Rating |
+|:-----:|-----------|----------|--------|
+| **1** | P6KE18CA | TVS Clamping | 24.4V @ 10A |
+| **2** | Würth 742792093 | EMI Filter | 90Ω @ 100MHz |
+| **3** | Fuse 1A T | Overcurrent | Fast-blow |
+| **4** | 1N5822 | Reverse Polarity | 40V 3A |
 
-[![BB Version](https://img.shields.io/badge/Firmware-V1.9-00d4aa?style=for-the-badge&logo=arduino&logoColor=white)](https://github.com)
-[![BB Circuit](https://img.shields.io/badge/Circuit-V1.7-0099ff?style=for-the-badge&logo=altiumdesigner&logoColor=white)](https://github.com)
-[![Touch](https://img.shields.io/badge/Interface-TOUCH_SCREEN-ff6b9d?style=for-the-badge&logo=smartphone&logoColor=white)](https://github.com)
+### Regulation (BLOC B) — v4.9
 
-&nbsp;
+| | Old (v4.6) | New (v4.9) |
+|---|------------|------------|
+| **Part** | 78L05 | **NCV2931AZ-5.0G** |
+| **Vin Max** | 30V | **60V transient** |
+| **Dropout** | 2V | **330mV** |
+| **Cold Crank** | ❌ Fails at 6V | ✅ Works at 5.3V |
 
-```
-┌────────────────────────────────────────┐
-│      BREAKOUT BOX V1.9 TACTILE         │
-├────────────────────────────────────────┤
-│                                        │
-│   ┌──────────────────────────────┐    │
-│   │                              │    │
-│   │    ╔════════════════════╗    │    │
-│   │    ║   TOUCH TO TEST    ║    │    │
-│   │    ╚════════════════════╝    │    │
-│   │                              │    │
-│   │      ESP32-C6 Touch LCD     │    │
-│   │         170 x 320           │    │
-│   └──────────────────────────────┘    │
-│                                        │
-│   [ INA219 ]  Current: 0-3.2A         │
-│   [ CST816 ]  Touch Controller        │
-│                                        │
-│   USB-C ●────────────● J-BB 12-pin    │
-│                                        │
-└────────────────────────────────────────┘
-```
+> 🔴 **Why the change?** TVS clamps at 25.2V. 78L05 dies at 30V. Math doesn't work.
 
-### Features
+### Logic & Pneumatic
 
-| Feature | Description |
-| --- | --- |
-| 👆 **Touch Interface** | No buttons — tap screen to test |
-| 🟢🔴 **Full-Screen GO/NOGO** | Giant OK/FAIL visible from 3 meters |
-| 📊 **One-Line AI Report** | `COPIER: Valve OK \| 12V=12.3V, 5V=5.0V, OUT=12.1V, I=350mA` |
-| ⚡ **Auto Test Sequence** | Power → Stimulation → Measurement → Verdict |
-| 🛡️ **All V1.7 Protections** | isfinite(), timeout 60s, watchdog 5s |
-
-### Hardware
-
-| Component | Reference | Notes |
-| --- | --- | --- |
-| MCU + Display | ESP32-C6 Touch LCD 1.9" (Waveshare) | 170×320, CST816 touch |
-| Current Sensor | INA219 HW-831B | 0-26V, 0-3.2A, I2C 0x40 |
-| Connector | 2×6 pin header | Interface J-BB on VALVE |
-
-### GPIO Mapping V1.9
-
-```
-ESP32-C6 Touch LCD 1.9" — Pinout BreakoutBox V1.7
-
-RESERVED (LCD/Touch):         AVAILABLE (BreakoutBox):
-├─ GPIO4  LCD_DIN             ├─ GPIO0  → DIV_12V (ADC)
-├─ GPIO5  LCD_CLK             ├─ GPIO1  → DIV_5V (ADC)
-├─ GPIO6  LCD_DC              ├─ GPIO2  → DIV_OUT (ADC)
-├─ GPIO7  LCD_CS              ├─ GPIO3  → AUTO_REQ (IN)
-├─ GPIO8  I2C SCL ←───────────┼─ GPIO8  → INA219 SCL (shared)
-├─ GPIO14 LCD_RST             ├─ GPIO18 → INA219 SDA (shared)
-├─ GPIO15 LCD_BL              ├─ GPIO19 → CMD (IN)
-├─ GPIO18 I2C SDA ←───────────┼─ GPIO20 → STIM1 (OUT)
-├─ GPIO22 Touch INT           ├─ GPIO21 → STIM2 (OUT)
-                              └─ GPIO23 → MANUAL_REQ (IN)
-
-I2C Bus (GPIO8/18):
-  ├─ 0x15 CST816 Touch Controller
-  └─ 0x40 INA219 Current Sensor
-```
-
-### J-BB Connector
-
-| Row A — Measurements | Row B — Stimulation |
-| --- | --- |
-| **Pin 1** `+12V_PROT` Protected 12V rail | **Pin 7** `GND` Ground reference |
-| **Pin 2** `+5V_LOG` Logic supply | **Pin 8** `STIM_1` After 1k resistor |
-| **Pin 3** `AUTO_REQ` Pressure switch out | **Pin 9** `STIM_2` Before 10k resistor |
-| **Pin 4** `OUT_DRIVER` BTS5090 output | **Pin 10** `I_SENSE+` Current sense + |
-| **Pin 5** `CMD` OR gate output | **Pin 11** `I_SENSE-` Current sense - |
-| **Pin 6** `MANUAL_REQ` Button toggle state | **Pin 12** `GND` Ground reference |
+| Block | Component | Function |
+|-------|-----------|----------|
+| **C** | SMC ISE30A-01-N | Boost sensing (NPN) |
+| **C** | 74HC14 | Schmitt buffer |
+| **D** | Toyota 22×22mm | Manual button |
+| **E** | CD4013 | Toggle flip-flop |
+| **G** | BTS5090-1EJA | Smart high-side driver |
+| **P** | MAC 35A 12V | Solenoid valve |
+| **P** | SMC IR1000-01BG | Pressure regulator |
 
 ---
 
 ## 🛡️ Safety
 
-### Transient Protection Matrix — v4.9
+### Transient Protection Matrix
 
-| Event | Input | Protection | Output | Status |
-| --- | --- | --- | --- | --- |
-| Normal Operation | 12-14.8V | Pass-through | 12-14.8V | ✅ |
-| Alternator Max | 14.8V | V_WRM margin | 14.8V | ✅ |
-| **Jump Start** | **24V** | **TVS clamp** | **25.2V** | 🛡️ |
-| **Load Dump** | **100V/400ms** | **TVS clamp** | **25.2V** | 🛡️ |
-| Cold Crank | 6V | NCV2931 dropout | 4.8V OK | ✅ |
+| Event | Input | Protection | Output | |
+|-------|-------|------------|--------|---|
+| Normal | 12-14.8V | — | 12-14.8V | ✅ |
+| **Jump Start** | 24V | Fuse | Protected | ⚡ |
+| **Load Dump** | 100V/400ms | TVS | 24.4V | 🛡️ |
+| **Cold Crank** | 6V | NCV2931 | 5V stable | ✅ |
 
-### Component Margins — v4.9
-
-```
-NCV2931 (NEW)  ████████████████████  60V trans  → 25.2V actual  (58% margin) ✅
-SMC ISE30A    ████████████░░░░░░░░  28V max    → 25.2V actual  (10% margin)
-1N5822        ████████████████████  40V max    → 25.2V actual  (37% margin)
-```
-
-> ⚠️ **v4.9 FIX**: 78L05 (14.5V max) → NCV2931 (60V transient) — **Critical for load dump survival**
-
-### ⚠️ Fail-Safe Behavior
+### Margin Analysis (v4.9)
 
 ```
-╔═══════════════════════════════════════════════════════════════╗
-║  Power Loss → Solenoid OFF → Valve CLOSES → Turbo Protected  ║
-║                                                               ║
-║  ⚠️  IMMEDIATELY LIFT THROTTLE IF SYSTEM FAILS               ║
-╚═══════════════════════════════════════════════════════════════╝
+NCV2931       ████████████████████████████░░  60V   → 25.2V  (58% margin) ✅
+BTS5090       ████████████████████████░░░░░░  42V   → 25.2V  (40% margin) ✅
+1N5822        █████████████████████████░░░░░  40V   → 25.2V  (37% margin) ✅
+SMC ISE30A    ███████████████████████████░░░  28V   → 25.2V  (10% margin) ⚠️
 ```
+
+### Fail-Safe Behavior
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│ POWER LOSS  │ ──▶ │ SOLENOID    │ ──▶ │ VALVE       │
+│             │     │ DE-ENERGIZES│     │ CLOSES      │
+└─────────────┘     └─────────────┘     └─────────────┘
+                         ⚠️ LIFT THROTTLE IMMEDIATELY
+```
+
+---
+
+## 📁 Documentation
+
+| File | Description |
+|------|-------------|
+| [`docs/VALVE_v4_9.md`](docs/) | Complete circuit documentation |
+| [`docs/BOM_VALVE_v4_9.md`](docs/) | Bill of Materials |
+| [`hardware/BreakoutBox_Circuit_V1_7.md`](hardware/) | Diagnostic schematic |
+| [`firmware/BreakoutBox_V1_10.ino`](firmware/) | Touch interface firmware |
+| [`firmware/User_Setup_C6_Touch_LCD.h`](firmware/) | TFT_eSPI configuration |
 
 ---
 
@@ -264,104 +259,58 @@ SMC ISE30A    ████████████░░░░░░░░  28V 
 
 ### Prerequisites
 
-* ✅ 2016 Ford Mustang EcoBoost with boost reference port
-* ✅ 12V ACC-switched power source
-* ✅ Air compressor system (90-120 PSI)
-* ✅ Exhaust bypass valve with pneumatic actuator
-
-### Wiring Checklist
-
 ```
-[ ] +12V_BATT → Battery via 5A fuse (≤15cm from terminal)
-[ ] +12V_ACC  → Ignition-switched source
-[ ] GND_STAR  → Single point chassis ground
-[ ] BOOST     → 6mm tubing from intake manifold
-[ ] PNEUMATIC → Compressor → Regulator (1 bar) → MAC 35A → Actuator
+✅ 2016 Ford Mustang EcoBoost with boost reference port
+✅ 12V ACC-switched power source  
+✅ Air compressor system (90-120 PSI)
+✅ Exhaust bypass valve with pneumatic actuator
 ```
 
-### Pressure Settings (SMC ISE30A)
+### Wiring
 
-| Parameter | Value | Notes |
-| --- | --- | --- |
-| **P_ON** | 2.9-3.6 PSI | Valve opens |
-| **P_OFF** | 2.0-2.9 PSI | Valve closes |
-| **Hysteresis** | ≥0.7 PSI | Prevents chatter |
+```
++12V_BATT ──── Battery via 5A fuse (≤15cm from terminal)
++12V_ACC  ──── Ignition-switched source
+GND_STAR  ──── Single point chassis ground
+BOOST     ──── 6mm tubing from intake manifold
+PNEUMATIC ──── Compressor → Regulator → MAC 35A → Actuator
+```
+
+### Pressure Settings
+
+| Parameter | Value |
+|-----------|-------|
+| **P_ON** | 2.9–3.6 PSI |
+| **P_OFF** | 2.0–2.9 PSI |
+| **Hysteresis** | ≥0.7 PSI |
 
 ---
 
 ## 📜 Version History
 
-### VALVE Circuit
+<details>
+<summary><b>VALVE Versions</b></summary>
 
 | Version | Date | Changes |
-| --- | --- | --- |
-| **v4.9** | Dec 2025 | 🔴 **CRITICAL**: 78L05→NCV2931 (60V transient), load dump compatible |
-| v4.8 | Dec 2025 | MCP1702 cold crank fix (reverted — Vin 14.5V < TVS clamp) |
-| v4.6 | Dec 2025 | TVS SM5S22A→P6KE18CA, orientation fix |
-| v4.5 | Dec 2025 | Added SM5S22A TVS for ISO 7637-2 Pulse 1 |
-| v4.4 | Dec 2025 | Added diagnostic LED + TEST button |
-| v4.3 | Dec 2025 | Added Breakout Box connector J-BB |
+|---------|------|---------|
+| **v4.9** | Dec 2025 | 🔴 78L05→NCV2931 (60V transient safe) |
+| v4.8 | Dec 2025 | MCP1702 attempt (failed: 14.5V max) |
+| v4.6 | Dec 2025 | TVS fix: SM5S22A→P6KE18CA |
+| v4.5 | Dec 2025 | Added TVS for ISO 7637-2 |
+| v4.4 | Dec 2025 | Diagnostic LED + TEST button |
 
-### Breakout Box
+</details>
+
+<details>
+<summary><b>BreakoutBox Versions</b></summary>
 
 | Version | Date | Changes |
-| --- | --- | --- |
-| **V1.9** | Dec 2025 | 🆕 **TOUCH SCREEN** interface, full GPIO remapping |
-| **V1.7** | Dec 2025 | 🆕 Circuit update for ESP32-C6 Touch LCD 1.9" |
-| V1.6 | Dec 2025 | GPIO protection verification, audit validation |
-| V1.5 | Dec 2025 | NVS calibration, watchdog, I2C timeout |
-| V1.4 | Dec 2025 | Initial release with INA219 current sensing |
+|---------|------|---------|
+| **V1.10** | Dec 2025 | Race condition fix, sensor diagnosis, 1s debounce |
+| V1.9 | Dec 2025 | ESP32-C6 Touch LCD 1.9" support |
+| V1.7 | Dec 2025 | INA219 NaN protection, ADC validation |
 
----
-
-## 📁 Documentation
-
-### Main Circuit
-
-| File | Description |
-| --- | --- |
-| [`VALVE_v4_9.md`](docs/VALVE_v4_9.md) | 📄 Complete circuit documentation |
-| [`BOM_VALVE_v4_9.md`](docs/BOM_VALVE_v4_9.md) | 📋 Bill of Materials |
-| [`PROTOCOLE_PREMORTEM_V4_2_3.txt`](docs/PROTOCOLE_PREMORTEM_V4_2_3.txt) | ✅ Design validation protocol |
-
-### Breakout Box
-
-| File | Description |
-| --- | --- |
-| [`BreakoutBox_V1_9.ino`](firmware/BreakoutBox_V1_9.ino) | 💻 Touch interface firmware |
-| [`BreakoutBox_Circuit_V1_7.md`](hardware/BreakoutBox_Circuit_V1_7.md) | 🔌 Diagnostic tool schematic |
-
----
-
-## ⚡ Quick Start — Breakout Box
-
-### 1. Flash Firmware
-
-```bash
-# Arduino IDE Settings
-Board: ESP32C6 Dev Module
-Port: /dev/ttyUSBx (Linux) or COMx (Windows)
-Upload Speed: 921600
-```
-
-### 2. Connect
-
-```
-VALVE J-BB (12-pin) ←──cable──→ BreakoutBox (12-pin)
-                                     │
-                                  USB-C (power)
-```
-
-### 3. Test
-
-```
-1. Touch "TEST" on screen
-2. Wait 2 seconds
-3. Read result:
-   🟢 GREEN = VALVE OK
-   🔴 RED   = VALVE FAIL + Cause
-4. Serial: 'R' for AI-ready report
-```
+</details>
 
 ---
 
@@ -369,8 +318,7 @@ VALVE J-BB (12-pin) ←──cable──→ BreakoutBox (12-pin)
 
 **This system controls exhaust flow on a high-power turbocharged vehicle.**
 
-Improper installation or failure can cause engine damage or safety hazards.
-
+Improper installation or failure can cause engine damage or safety hazards.  
 *Professional installation recommended.*
 
 &nbsp;
@@ -379,10 +327,15 @@ Improper installation or failure can cause engine damage or safety hazards.
 
 &nbsp;
 
+<div align="center">
+
 **Made with 🔥 for the Mustang community**
 
 *Mehdi — December 2025*
 
 &nbsp;
 
-[![GitHub](https://img.shields.io/badge/Personal_Project-Not_for_Commercial_Use-lightgrey?style=flat-square)](https://github.com)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![Personal](https://img.shields.io/badge/Personal_Project-Not_Commercial-lightgrey?style=flat-square)](https://github.com)
+
+</div>
